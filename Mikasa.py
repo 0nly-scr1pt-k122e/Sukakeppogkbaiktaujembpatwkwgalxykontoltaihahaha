@@ -107,53 +107,6 @@ os.system(f' echo "{asci}" | lolcat')
 time.sleep(10)
 os.system('clear')
 
-REPO_URL = "https://github.com/x7f9k2m4n6j4h8t2v9p5s3k1/xkaks1731Tyha18-RalwAvd"
-
-def check_update():
-    tools_dir = os.path.dirname(os.path.abspath(__file__))
-    os.chdir(tools_dir)
-    os.system('clear')
-    chars = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
-    start = time.time()
-    i = 0
-    duration = 9
-    while time.time() - start < duration:
-          sys.stdout.write(f"\r{BI} {TP} {chars[i % len(chars)]} Sedang Mengecek Update Tools Mikasa {N}")
-          sys.stdout.flush()
-          i += 1
-          time.sleep(0.08)
-    sys.stdout.write("\r" + " " * 60 + "\r")
-    sys.stdout.flush()
-    os.system('clear')
-    time.sleep(3)
-    try:
-        subprocess.run(["git", "remote", "set-url", "origin", REPO_URL],
-                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-        subprocess.run(["git", "fetch", "origin", "main"],
-                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-
-        local = subprocess.check_output(["git", "rev-parse", "main"]).strip()
-        remote = subprocess.check_output(["git", "rev-parse", "origin/main"]).strip()
-
-        if local != remote:
-            print("[ ! ] Update tersedia! Menarik versi terbaru...")
-            time.sleep(2)
-            subprocess.run(["git", "pull", "origin", "main"], check=True)
-            print("[ + ] Update selesai. Silakan jalankan ulang tools.")
-            time.sleep(2)
-            sys.exit(0)
-        else:
-            os.system('clear')
-            print(f"{BI} {TP}[ ✦ ] Tools Sudah Versi Terbaru{N}\n")
-            time.sleep(3)
-    except subprocess.CalledProcessError:
-        print(f"{BI}{TP}[ ✦ ] Tools Sudah Versi Terbaru Saat ini{N}\n")
-        time.sleep(2)
-    except FileNotFoundError:
-        print("[ ! ] Git tidak ditemukan. Pastikan git sudah terinstall.\n")
-        time.sleep(2)
-
 os.system('clear')
 
 babi = """
@@ -11939,7 +11892,6 @@ def menu_utama():
         sys.exit(0)
 
 if __name__ == "__main__":
-    check_update()
     uid = get_uid()
     status, user = cek_uid(uid)
     if status is None:
