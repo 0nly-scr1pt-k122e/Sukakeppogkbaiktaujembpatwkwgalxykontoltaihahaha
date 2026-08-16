@@ -471,7 +471,7 @@ def print_banner(user, date, username):
 {W}│  {W}Author: {G}Rulzzz_06{N}
 {W}│  {W}Tools : {G}24{N}
 {W}│  {W}Date  : {G}{date}{N}
-{W}│  {W}Version: {G}1.5.2{N}
+{W}│  {W}Version: {G}2.2.0{N}
 {W}│  {W}UserName: {G}{username}{N}
 {W}│  {W}User : {G}Premium{N}
 {W}╰─────────────────────────────────────────────────────────────╯{N}
@@ -501,6 +501,7 @@ def print_banner(user, date, username):
 {W}│ [ {G}22{N} ] Cek data Guru{N}
 {W}│ [ {G}23{N} ] Spam bot Telegram{N}
 {W}│ [ {G}24{N} ] Generator Ransomware terminal{N}
+{W}│ [ {G}25{N} ] Checker IMEI{N}
 {W}╰╭────────────────────────────────────────────────────────────╮{N}
 {W}  {R}00{N} EXIT{N}
 {W}╰────────────────────────────────────────────────────────────╯{N}
@@ -11843,6 +11844,174 @@ exec(compile(unpad(AES.new(_e,AES.MODE_CBC,_f).decrypt(_d),16).decode(),"<string
         
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
+def tool_imei_checker():
+    import os, sys, time, json, requests, threading
+    
+    os.system('clear')
+    
+    R = '\033[91m'
+    G = '\033[92m'
+    Y = '\033[93m'
+    W = '\033[97m'
+    C = '\033[96m'
+    U = '\033[95m'
+    N = '\033[0m'
+    
+    ascii_imei = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣤⣤⣶⣶⣾⣿⣿⣿⣿⣷⣶⣶⣤⣤⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣠⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣄⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⡀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣄⠀⠀⠀⠀⠀
+⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀
+⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀
+⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀
+⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀
+⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⢺⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
+⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠈⠻⣿⣿⣿⣿⣿⣿⡿⠋⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀
+⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠈⠙⠿⣿⠿⠋⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀
+⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀
+⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣾⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀
+⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⣤⣀⡀⠀⠀⠀⠀⣀⣠⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⠀
+⠀⠀⠀⠀⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠋⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠙⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠋⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠛⠛⠿⠿⢿⣿⣿⣿⣿⡿⠿⠿⠛⠛⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
+    os.system(f'echo "{ascii_imei}" | lolcat 2>/dev/null || echo "{ascii_imei}"')
+    
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {W}:{G}IMEI Checker {R}│ {W}Developer {W}:{G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯{N}""")
+    print(f"{W}╭───────────────────────────────────────────────────────────────────╮{N}")
+    print(f"{W}│ Masukkan IMEI Target {R}( {a}14 - 17 digit {R}){N}")
+    print(f"{W}│ Contoh {R}:{a} 353911112345678{N}")
+    print(f"{W}╰───────────────────────────────────────────────────────────────────╯{N}")
+    
+    imei = input(f"{U}❯❯❯ {W}Masukkan IMEI {G}❯{N} ").strip()
+    
+    if not imei:
+        print(f"{W}[ {R}??{W} ] IMEI tidak boleh kosong!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    if not imei.isdigit() or len(imei) < 14 or len(imei) > 17:
+        print(f"{W}[ {R}??{W} ] IMEI harus {a}14-17{W} digit angka!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    print(f" {W}[ {R}!!{W} ] IMEI: {a}{imei}{N}")
+    
+    def load_bar(stop_event):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 15
+        color_index = 0
+        while not stop_event.is_set():
+            for i in range(length + 1):
+                if stop_event.is_set():
+                    break
+                filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+                empty = '□' * (length - i)
+                sys.stdout.write(f'\r [ {G}✦{W} ] Mengecek IMEI [[{filled_color}{empty}{W}]]')
+                sys.stdout.flush()
+                time.sleep(0.05)
+                color_index += 1
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+    
+    stop_loading = threading.Event()
+    loading_thread = threading.Thread(target=load_bar, args=(stop_loading,))
+    loading_thread.daemon = True
+    loading_thread.start()
+    
+    time.sleep(1.5)
+    
+    try:
+        url = "https://www.officialsimunlock.com/Home/GetIMEI"
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36"
+        }
+        data = {"imei": imei}
+        
+        response = requests.post(url, data=data, headers=headers, timeout=15)
+        stop_loading.set()
+        loading_thread.join()
+        
+        if response.status_code == 200:
+            try:
+                data = response.json()
+                
+                print(f"\n{W}╭────────────────────────────────────────────────────────────────────────╮")
+                print(f"{W}│ {G}✓{W} IMEI Ditemukan!{N}")
+                print(f"{W}├────────────────────────────────────────────────────────────────────────┤")
+                
+                print(f"{W}│ {W}IMEI               {R}: {G}{imei}{N}")
+                
+                label_map = {
+                    'Item1': 'Brand',
+                    'Item2': 'id_name',
+                    'Item3': 'model',
+                    'Item4': 'id_name2',
+                    'Item5': 'model 2',
+                    'Item6': 'IMEI',
+                    'Success': 'Status',
+                    'Message': 'Message'
+                }
+                
+                for key, value in data.items():
+                    if key == "Model" and isinstance(value, dict):
+                        print(f"{W}├────────────────────────────────────────────────────────────────────────┤")
+                        print(f"{W}│ {G}MODEL INFORMATION{N}")
+                        for sub_key, sub_value in value.items():
+                            if sub_value:
+                                label = label_map.get(sub_key, sub_key)
+                                if isinstance(sub_value, list):
+                                    print(f"{W}│ {W}{label:<18} {R}: {G}{', '.join(sub_value)}{N}")
+                                else:
+                                    print(f"{W}│ {W}{label:<18} {R}: {G}{sub_value}{N}")
+                    else:
+                        if value:
+                            label = label_map.get(key, key)
+                            if isinstance(value, list):
+                                print(f"{W}│ {W}{label:<18} {R}: {G}{', '.join(value)}{N}")
+                            else:
+                                print(f"{W}│ {W}{label:<18} {R}: {G}{value}{N}")
+                
+                print(f"{W}╰────────────────────────────────────────────────────────────────────────╯")
+                
+            except json.JSONDecodeError:
+                print(f"\n{W}╭────────────────────────────────────────────────────────────────────╮")
+                print(f"{W}│ {R}✗{W} Respon server tidak valid (IMEI mungkin salah){N}")
+                print(f"{W}╰────────────────────────────────────────────────────────────────────╯")
+        else:
+            print(f"\n{W}╭──────────────────────────────────────────────────────────────────╮")
+            print(f"{W}│ {R}✗{W} Gagal mengambil data! Status: {response.status_code}{N}")
+            print(f"{W}╰──────────────────────────────────────────────────────────────────╯")
+            
+    except requests.exceptions.Timeout:
+        stop_loading.set()
+        loading_thread.join()
+        print(f"\n{R}✗ Timeout! Server tidak merespons.{N}")
+    except requests.exceptions.ConnectionError:
+        stop_loading.set()
+        loading_thread.join()
+        print(f"\n{R}✗ Gagal terhubung ke server!{N}")
+    except Exception as e:
+        stop_loading.set()
+        loading_thread.join()
+        print(f"\n{R}✗ Error: {e}{N}")
+    
+    input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
+
 def menu_utama():
     global clock_running, current_input
     
@@ -11875,6 +12044,7 @@ def menu_utama():
         "22": tool_gtk_checker,
         "23": tool_telegram_spam,
         "24": tool_ransomware_generator,
+        "25": tool_imei_checker,
     }
     
     try:
