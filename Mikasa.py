@@ -469,9 +469,9 @@ def print_banner(user, date, username):
 {W}│  {W}UID   : {C}{uid}{N}
 {W}│  {W}Status: {status_text}{N}
 {W}│  {W}Author: {G}Rulzzz_06{N}
-{W}│  {W}Tools : {G}24{N}
+{W}│  {W}Tools : {G}27{N}
 {W}│  {W}Date  : {G}{date}{N}
-{W}│  {W}Version: {G}2.2.2{N}
+{W}│  {W}Version: {G}2.3.1{N}
 {W}│  {W}UserName: {G}{username}{N}
 {W}│  {W}User : {G}Premium{N}
 {W}╰─────────────────────────────────────────────────────────────╯{N}
@@ -502,7 +502,8 @@ def print_banner(user, date, username):
 {W}│ [ {G}23{N} ] Spam bot Telegram{N}
 {W}│ [ {G}24{N} ] Generator Ransomware terminal{N}
 {W}│ [ {G}25{N} ] Cek IMEI{N}
-{W}│ [ {G}26{N} ] Cek Link {R}/{N} Web Phising
+{W}│ [ {G}26{N} ] Cek Link {R}/{N} Web Phising{N}
+{W}│ [ {G}27{N} ] Web Reconnaissance{N}
 {W}╰╭────────────────────────────────────────────────────────────╮{N}
 {W}  {R}00{N} EXIT{N}
 {W}╰────────────────────────────────────────────────────────────╯{N}
@@ -4894,7 +4895,7 @@ def spam_otp_auto2000(nomor):
     except Exception as e:
         return False
 
-def spam_carro(phone):
+def spam_otp_carro(phone):
     try:
         p = normalize_phone(phone)
         if p.startswith('0'):
@@ -12200,6 +12201,472 @@ def tool_web_phising():
     
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
+def tool_web_recon():
+    import os, sys, time, json, re, socket, ssl, http.client, threading, concurrent.futures
+    import requests
+    import ipaddress
+    from urllib.parse import urlparse
+    from datetime import datetime
+
+    os.system('clear')
+
+    R = '\033[91m'
+    G = '\033[92m'
+    Y = '\033[93m'
+    W = '\033[97m'
+    C = '\033[96m'
+    U = '\033[95m'
+    N = '\033[0m'
+
+    ascii_ghost = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⣀⣀⣀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣶⣿⣿⡿⠿⠿⠿⠿⠿⠿⢿⣿⣿⣶⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣾⣿⡿⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠛⠿⣿⣷⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠋⠁⠀⣠⣴⣶⡿⠁⠀⣴⣿⣿⣦⡀⠈⢻⣶⣦⣄⡀⠀⠙⠿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⡿⠋⠀⣀⣴⣿⣿⣿⣿⠁⠀⣼⣿⣿⣿⣿⣷⡀⠀⢿⣿⣿⣿⣶⣄⠀⠈⢻⣿⣿⣿⣿⣿⣿⣷⣶⣤⡀⠀
+⠀⠀⠀⠀⠀⠀⠀⢀⣼⣿⠟⠀⠀⠐⠻⢿⣿⣿⣿⠇⠀⣸⣿⣿⣿⣿⣿⣿⣧⠀⠘⣿⣿⣿⠿⠛⠁⠀⠀⠙⣿⣿⡀⠀⠀⠈⠙⣿⣿⡀
+⠀⠀⠀⠀⠀⠀⠀⣾⣿⠏⠀⢠⣶⣤⣄⡀⠀⠈⠉⠀⠀⠛⠛⠛⠛⠛⠛⠛⠛⠀⠀⠉⠁⠀⣀⣠⣴⣾⣆⠀⠘⣿⣿⡀⠀⠀⢠⣿⡿⠀
+⠀⠀⠀⠀⠀⠀⣸⣿⡏⠀⢠⣿⣿⣿⣿⣿⣿⣷⡆⠀⢠⣤⣤⣤⣤⣤⣤⣤⣤⣄⠀⢰⣿⣿⣿⣿⣿⣿⣿⣆⠀⠘⣿⣷⣠⣴⣿⠟⠁⠀
+⠀⠀⠀⠀⠀⢀⣿⣿⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⡄⢀⣿⣿⣿⠟⠁⠀⠀⠀
+⠀⠀⠀⠀⠀⢸⣿⡇⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⠁⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠋⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣀⣼⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣿⡿⠟⠋⠁⢀⣴⣶⠀⠀⠀⠀⠀
+⠀⠀⣠⣾⣿⢿⣿⡇⠀⠸⣿⣿⣿⣿⣿⣿⣿⣿⡀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣀⣤⣿⣿⣿⠿⠛⠉⢀⣠⡄⠀⢸⣿⡏⠀⠀⠀⠀⠀
+⠀⣴⣿⡟⠁⠈⣿⣿⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠋⠁⢀⣠⣴⣾⣿⣿⠃⠀⣼⣿⠇⠀⠀⠀⠀⠀
+⠰⣿⣿⠀⠀⠀⢹⣿⣇⠀⠘⣿⣿⣿⣿⣿⣿⣿⣧⣤⣼⣿⣿⣿⡿⠿⠛⠋⠉⠀⠀⠠⣶⣾⣿⣿⣿⣿⣿⠏⠀⢠⣿⡿⠀⠀⠀⠀⠀⠀
+⠀⠻⢿⣷⣶⣦⣤⣿⣿⣦⣴⣿⣿⣿⣿⣿⣿⠿⠿⠟⠛⠉⠉⢀⣀⣠⣤⣤⣤⠀⠀⣀⡀⠀⠉⠙⠻⢿⠏⠀⢠⣿⣿⠁⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠈⠉⠙⠛⠛⠛⠛⠛⠉⠉⠉⠁⢀⣀⣀⣤⡄⠀⢰⣿⣿⣿⣿⣿⣿⡟⠀⢠⣿⣿⣿⣶⣤⡀⠀⠀⣠⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⣶⣶⣄⠀⠈⠻⣿⣿⣿⣿⡀⠀⢻⣿⣿⣿⣿⡿⠁⠀⣾⣿⣿⣿⠿⠋⠀⢀⣼⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣷⣄⡀⠀⠙⠻⠿⣷⡀⠀⠻⣿⣿⠟⠁⢀⣼⠿⠟⠋⠁⠀⣠⣶⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⣿⣷⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣶⣿⡿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠻⠿⣿⣿⣷⣶⣶⣶⣶⣶⣶⣾⣿⣿⠿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
+    os.system(f'echo "{ascii_ghost}" | lolcat 2>/dev/null || echo "{ascii_ghost}"')
+
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {R}: {G}Web Reconnaissance {R}│ {W}Developer {R}: {G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯{N}""")
+    print(f"{W}╭───────────────────────────────────────────────────────────────────╮{N}")
+    print(f"{W}│ Masukkan Domain {R}/{W} link target{N}")
+    print(f"{W}│ Contoh {R}:{W} google.com  atau  https://google.com{N}")
+    print(f"{W}╰───────────────────────────────────────────────────────────────────╯{N}")
+
+    target = input(f"{U}❯❯❯ {W}Masukkan Target {G}❯{N} ").strip()
+
+    if not target:
+        print(f"{W}[ {R}??{W} ] Target tidak boleh kosong!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+
+    domain = target.replace("http://", "").replace("https://", "").split("/")[0]
+    domain = domain.split(":")[0]
+
+    print(f"\n{W} [ {G}!{W} ] Target {R}: {G}{domain}{N}")
+
+    try:
+        ip = socket.gethostbyname(domain)
+        print(f"{W} [ {G}✓{W} ] IP Address {R}: {G}{ip}{N}")
+    except:
+        print(f"{W}[ {R}??{W} ] Gagal resolve domain!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+
+    found = {
+        "subs": [], "leaks": [], "git": [], "env": [], "backup": [],
+        "phpinfo": [], "emails": [], "keys": [], "ports": [], "tech": []
+    }
+    lock = threading.Lock()
+    stop_loading = threading.Event()
+    visited = set()
+
+    def load_bar(text):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 18
+        color_index = 0
+        i = 0
+        while not stop_loading.is_set():
+            filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+            empty = '□' * (length - i)
+            sys.stdout.write(f'\r [ {G}✦{W} ] {text} [[{filled_color}{empty}{W}]]')
+            sys.stdout.flush()
+            i += 1
+            if i > length:
+                i = 0
+                color_index += 1
+            time.sleep(0.05)
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+
+    stop_loading.clear()
+    t = threading.Thread(target=load_bar, args=("Subdomain From API",))
+    t.daemon = True
+    t.start()
+
+    try:
+        apis = [
+            f"https://api.hackertarget.com/hostsearch/?q={domain}",
+            f"https://crt.sh/?q=%.{domain}&output=json",
+        ]
+
+        for api in apis:
+            try:
+                r = requests.get(api, timeout=15)
+                if r.status_code == 200:
+                    if "hackertarget" in api:
+                        for line in r.text.splitlines():
+                            parts = line.split(",")
+                            if len(parts) >= 2:
+                                sub = parts[0].strip()
+                                if sub and domain in sub:
+                                    with lock:
+                                        if sub not in found["subs"]:
+                                            found["subs"].append(sub)
+                    elif "crt.sh" in api:
+                        try:
+                            data = json.loads(r.text)
+                            for cert in data:
+                                if isinstance(cert, dict):
+                                    name = cert.get('name_value', '')
+                                    if domain in name:
+                                        for sub in name.splitlines():
+                                            sub = sub.strip()
+                                            if sub and domain in sub:
+                                                with lock:
+                                                    if sub not in found["subs"]:
+                                                        found["subs"].append(sub)
+                        except:
+                            pass
+            except:
+                pass
+    except:
+        pass
+
+    stop_loading.set()
+    t.join()
+
+    stop_loading.clear()
+    t = threading.Thread(target=load_bar, args=("Subdomain Brute Force",))
+    t.daemon = True
+    t.start()
+
+    subs_brute = [
+        "admin", "api", "dev", "test", "staging", "beta", "vpn", "mail", "ftp",
+        "cpanel", "git", "jenkins", "kibana", "blog", "shop", "store", "app",
+        "dashboard", "portal", "secure", "auth", "login", "adminpanel",
+        "backend", "phpmyadmin", "mysql", "db", "database", "old", "new",
+        "temp", "tmp", "backup", "archive", "legacy", "classic", "v1", "v2",
+        "mobile", "m", "wap", "cdn", "static", "media", "images", "img", "video",
+        "assets", "files", "download", "upload", "ssl", "webmail", "email", "smtp",
+        "crm", "erp", "chat", "support", "help", "docs", "wiki", "devops"
+    ]
+
+    def check_sub(sub):
+        try:
+            socket.gethostbyname(sub)
+            with lock:
+                if sub not in found["subs"]:
+                    found["subs"].append(sub)
+        except:
+            pass
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as exe:
+        futures = []
+        for word in subs_brute:
+            for prefix in ["", "api-", "dev-", "test-", "staging-", "admin-"]:
+                sub = f"{prefix}{word}.{domain}"
+                futures.append(exe.submit(check_sub, sub))
+        for f in futures:
+            try:
+                f.result(timeout=5)
+            except:
+                pass
+
+    stop_loading.set()
+    t.join()
+
+    stop_loading.clear()
+    t = threading.Thread(target=load_bar, args=("Port Scanning",))
+    t.daemon = True
+    t.start()
+
+    common_ports = [21, 22, 23, 25, 53, 80, 110, 443, 993, 995, 2082, 2083, 2086, 2087, 2095, 2096, 3306, 3389, 5432, 5900, 6379, 8080, 8443, 27017]
+
+    def scan_port(port):
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(2)
+            result = sock.connect_ex((ip, port))
+            if result == 0:
+                with lock:
+                    if port not in found["ports"]:
+                        found["ports"].append(port)
+            sock.close()
+        except:
+            pass
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as exe:
+        exe.map(scan_port, common_ports)
+
+    stop_loading.set()
+    t.join()
+
+    stop_loading.clear()
+    t = threading.Thread(target=load_bar, args=("Technology Detection",))
+    t.daemon = True
+    t.start()
+
+    def tech_detection(host):
+        try:
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+
+            conn = http.client.HTTPSConnection(host, timeout=10, context=ctx)
+            conn.request("GET", "/", headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+            r = conn.getresponse()
+            headers = dict(r.getheaders())
+            body = r.read(50000).decode(errors='ignore')
+
+            tech_stack = []
+            if "server" in headers:
+                tech_stack.append(headers["server"])
+            if "x-powered-by" in headers:
+                tech_stack.append(headers["x-powered-by"])
+            if "wp-content" in body or "wordpress" in body:
+                tech_stack.append("WordPress")
+            elif "laravel" in body.lower():
+                tech_stack.append("Laravel")
+            elif "react" in body or "next" in body or "nextjs" in body:
+                tech_stack.append("React/Next.js")
+            elif "vue" in body or "vite" in body:
+                tech_stack.append("Vue.js")
+            elif "django" in body.lower():
+                tech_stack.append("Django")
+            elif "flask" in body.lower():
+                tech_stack.append("Flask")
+
+            with lock:
+                found["tech"].extend(tech_stack)
+            conn.close()
+        except:
+            pass
+
+    tech_detection(domain)
+    stop_loading.set()
+    t.join()
+
+    stop_loading.clear()
+    t = threading.Thread(target=load_bar, args=("Wayback Machine",))
+    t.daemon = True
+    t.start()
+
+    try:
+        url = f"http://web.archive.org/cdx/search/cdx?url={domain}/*&output=json&fl=original&collapse=urlkey"
+        r = requests.get(url, timeout=15)
+        if r.status_code == 200:
+            data = json.loads(r.text)
+            if data and len(data) > 1:
+                for item in data[1:20]:
+                    if isinstance(item, list) and len(item) > 0:
+                        with lock:
+                            if item[0] not in found["subs"]:
+                                found["subs"].append(f"[Archive] {item[0][:80]}")
+    except:
+        pass
+
+    stop_loading.set()
+    t.join()
+
+    stop_loading.clear()
+    t = threading.Thread(target=load_bar, args=("Leak Hunting",))
+    t.daemon = True
+    t.start()
+
+    real_paths = [
+        "/.env", "/.env.bak", "/.env.prod", "/.env.local", "/.env.dev",
+        "/.git/HEAD", "/.git/config", "/.git/logs/HEAD", "/.git/description",
+        "/backup.sql", "/db_backup.sql", "/database.sql", "/dump.sql", "/backup.zip",
+        "/phpinfo.php", "/info.php", "/test.php", "/debug.php", "/admin.php",
+        "/admin/.env", "/laravel/.env", "/config/.env", "/app/.env",
+        "/wp-config.php.bak", "/backup/wp-config.php", "/wp-config.php",
+        "/robots.txt", "/sitemap.xml", "/web.config", "/.htaccess",
+        "/config.json", "/config.js", "/settings.py", "/.dockerignore",
+        "/docker-compose.yml", "/.travis.yml", "/.github/workflows",
+        "/composer.json", "/package.json", "/.bash_history", "/.ssh/id_rsa",
+        "/server-status", "/.aws/credentials", "/.npmrc", "/.yarnrc"
+    ]
+
+    def deep_probe(host, path):
+        key = f"{host}{path}"
+        if key in visited:
+            return
+        visited.add(key)
+
+        try:
+            try:
+                ctx = ssl.create_default_context()
+                ctx.check_hostname = False
+                ctx.verify_mode = ssl.CERT_NONE
+                conn = http.client.HTTPSConnection(host, timeout=8, context=ctx)
+                conn.request("GET", path, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                r = conn.getresponse()
+                conn.close()
+            except:
+                conn = http.client.HTTPConnection(host, timeout=8)
+                conn.request("GET", path, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                r = conn.getresponse()
+                conn.close()
+
+            if r.status in [200, 301, 302, 403]:
+                data = r.read(102400).decode(errors="ignore")
+                url = f"https://{host}{path}" if r.status != 403 else f"{host}{path}"
+
+                if ".env" in path and any(x in data for x in ["DB_PASSWORD", "APP_KEY", "JWT_SECRET", "API_KEY", "SECRET_KEY", "DATABASE_URL"]):
+                    with lock:
+                        found["env"].append(url)
+                elif ".git" in path and ("ref:" in data or "[core]" in data or "index" in data[:50]):
+                    with lock:
+                        found["git"].append(url)
+                elif any(x in path for x in ["sql", "dump", "backup", "zip", "tar", ".sql"]):
+                    if "INSERT INTO" in data or "CREATE TABLE" in data or "PK" in data[:100]:
+                        with lock:
+                            found["backup"].append(url)
+                    elif len(data) > 5000:
+                        with lock:
+                            found["backup"].append(url)
+                elif "phpinfo" in path or "PHP Version" in data:
+                    with lock:
+                        found["phpinfo"].append(url)
+                elif any(x in path for x in ["config.json", "settings.py", "wp-config", ".aws", ".npmrc"]):
+                    with lock:
+                        found["leaks"].append(url)
+
+                emails = re.findall(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', data)
+                if emails:
+                    with lock:
+                        for email in emails:
+                            if email not in found["emails"]:
+                                found["emails"].append(email)
+
+                keys = re.findall(r'sk_live_[a-zA-Z0-9]{20,50}|sk_test_[a-zA-Z0-9]{20,50}|pk_live_[a-zA-Z0-9]{20,50}|AKIA[0-9A-Z]{16}', data)
+                if keys:
+                    with lock:
+                        for key in keys:
+                            if key not in found["keys"]:
+                                found["keys"].append(key)
+        except:
+            pass
+
+    for path in real_paths:
+        deep_probe(domain, path)
+
+    all_hosts = list(set(found["subs"]))[:100]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as exe:
+        futures = []
+        for host in all_hosts:
+            if host.startswith("[Archive]"):
+                continue
+            for path in real_paths:
+                futures.append(exe.submit(deep_probe, host, path))
+            futures.append(exe.submit(tech_detection, host))
+        for f in futures:
+            try:
+                f.result(timeout=10)
+            except:
+                pass
+
+    stop_loading.set()
+    t.join()
+
+    subs_unique = list(set([s for s in found["subs"] if not s.startswith("[Archive]")]))
+    archive_items = [s for s in found["subs"] if s.startswith("[Archive]")]
+    emails_unique = list(set(found["emails"]))
+    keys_unique = list(set(found["keys"]))
+    tech_unique = list(set(found["tech"]))
+
+    print(f"\n{W}╭────────────────────────────────────────────────────────────────────────╮")
+    print(f"{W}│ {G}✓{W} Web Recon Succesfuly - {G}{domain}{N}")
+    print(f"{W}├────────────────────────────────────────────────────────────────────────┤")
+
+    print(f"{W}│ {G}BASIC INFORMATION{N}")
+    print(f"{W}│ {W}Domain              {R}: {G}{domain}{N}")
+    print(f"{W}│ {W}IP Address          {R}: {G}{ip}{N}")
+
+    print(f"{W}├────────────────────────────────────────────────────────────────────────┤")
+    print(f"{W}│ {G}SUBDOMAINS ({len(subs_unique)}){N}")
+    if subs_unique:
+        for sub in subs_unique:
+            print(f"{W}│ {W}  {G}{sub}{N}")
+    else:
+        print(f"{W}│ {W}  {R}Tidak ada subdomain ditemukan{N}")
+
+    if archive_items:
+        print(f"{W}│ {G}WAYBACK ARCHIVE ({len(archive_items)}){N}")
+        for item in archive_items:
+            print(f"{W}│ {W}  {G}{item}{N}")
+
+    print(f"{W}├────────────────────────────────────────────────────────────────────────┤")
+    print(f"{W}│ {G}OPEN PORTS ({len(found['ports'])}){N}")
+    if found['ports']:
+        for port in found['ports']:
+            print(f"{W}│ {W}  Port {G}{port}{W} - OPEN{N}")
+    else:
+        print(f"{W}│ {W}  {R}Tidak ada port terbuka{N}")
+
+    print(f"{W}├────────────────────────────────────────────────────────────────────────┤")
+    print(f"{W}│ {G}TECHNOLOGY STACK ({len(tech_unique)}){N}")
+    if tech_unique:
+        for tech in tech_unique:
+            print(f"{W}│ {W}  {G}{tech}{N}")
+    else:
+        print(f"{W}│ {W}  {R}Tidak terdeteksi{N}")
+
+    print(f"{W}├────────────────────────────────────────────────────────────────────────┤")
+    print(f"{W}│ {G}LEAKS FOUND{N}")
+
+    if found['env']:
+        print(f"{W}│ {R}  ENV Files ({len(found['env'])}){N}")
+        for leak in found['env']:
+            print(f"{W}│    {G}{leak}{N}")
+
+    if found['git']:
+        print(f"{W}│ {R}  Git Exposed ({len(found['git'])}){N}")
+        for leak in found['git']:
+            print(f"{W}│    {G}{leak}{N}")
+
+    if found['backup']:
+        print(f"{W}│ {R}  Database Dumps ({len(found['backup'])}){N}")
+        for leak in found['backup']:
+            print(f"{W}│    {G}{leak}{N}")
+
+    if found['phpinfo']:
+        print(f"{W}│ {R}  PHPInfo ({len(found['phpinfo'])}){N}")
+        for leak in found['phpinfo']:
+            print(f"{W}│    {G}{leak}{N}")
+
+    if found['leaks']:
+        print(f"{W}│ {R}  Config Leaks ({len(found['leaks'])}){N}")
+        for leak in found['leaks']:
+            print(f"{W}│    {G}{leak}{N}")
+
+    if emails_unique:
+        print(f"{W}│ {R}  Emails Found ({len(emails_unique)}){N}")
+        for email in emails_unique:
+            print(f"{W}│    {G}{email}{N}")
+
+    if keys_unique:
+        print(f"{W}│ {R}  API Keys Found ({len(keys_unique)}){N}")
+        for key in keys_unique:
+            print(f"{W}│    {G}{key}{N}")
+
+    if not any([found['env'], found['git'], found['backup'], found['phpinfo'], found['leaks'], emails_unique, keys_unique]):
+        print(f"{W}│ {W}  {G}Tidak ada leak ditemukan{N}")
+
+    print(f"{W}╰────────────────────────────────────────────────────────────────────────╯")
+
+    input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
+
 def menu_utama():
     global clock_running, current_input
     
@@ -12234,6 +12701,7 @@ def menu_utama():
         "24": tool_ransomware_generator,
         "25": tool_imei_checker,
         "26": tool_web_phising,
+        "27": tool_web_recon,
     }
     
     try:
