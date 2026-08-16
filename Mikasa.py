@@ -471,7 +471,7 @@ def print_banner(user, date, username):
 {W}│  {W}Author: {G}Rulzzz_06{N}
 {W}│  {W}Tools : {G}24{N}
 {W}│  {W}Date  : {G}{date}{N}
-{W}│  {W}Version: {G}2.2.0{N}
+{W}│  {W}Version: {G}2.2.2{N}
 {W}│  {W}UserName: {G}{username}{N}
 {W}│  {W}User : {G}Premium{N}
 {W}╰─────────────────────────────────────────────────────────────╯{N}
@@ -501,7 +501,8 @@ def print_banner(user, date, username):
 {W}│ [ {G}22{N} ] Cek data Guru{N}
 {W}│ [ {G}23{N} ] Spam bot Telegram{N}
 {W}│ [ {G}24{N} ] Generator Ransomware terminal{N}
-{W}│ [ {G}25{N} ] Checker IMEI{N}
+{W}│ [ {G}25{N} ] Cek IMEI{N}
+{W}│ [ {G}26{N} ] Cek Link {R}/{N} Web Phising
 {W}╰╭────────────────────────────────────────────────────────────╮{N}
 {W}  {R}00{N} EXIT{N}
 {W}╰────────────────────────────────────────────────────────────╯{N}
@@ -11888,7 +11889,7 @@ def tool_imei_checker():
     
     print(f"""
 {W}╭─────────────────────────────────────────────────────────────────╮
-{W}│ {W}Tools {W}:{G}IMEI Checker {R}│ {W}Developer {W}:{G}Rullzzz06
+{W}│ {W}Tools {R}: {G}IMEI Checker {R}│ {W}Developer {R}: {G}Rullzzz06
 {W}╰─────────────────────────────────────────────────────────────────╯{N}""")
     print(f"{W}╭───────────────────────────────────────────────────────────────────╮{N}")
     print(f"{W}│ Masukkan IMEI Target {R}( {a}14 - 17 digit {R}){N}")
@@ -12012,6 +12013,196 @@ def tool_imei_checker():
     
     input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
+def tool_web_phising():
+    import os, sys, time, json, requests, threading
+    from urllib.parse import urlparse, quote
+    
+    os.system('clear')
+    
+    R = '\033[91m'
+    G = '\033[92m'
+    Y = '\033[93m'
+    W = '\033[97m'
+    C = '\033[96m'
+    U = '\033[95m'
+    N = '\033[0m'
+    
+    ascii_phising = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣠⣤⣤⣴⣶⣶⣶⣶⣦⣤⣤⣤⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣾⣿⡿⠟⠛⣿⡿⠋⠁⠀⠀⠙⢿⣿⡛⠻⢿⣿⣿⣷⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣾⢿⣿⡿⠛⠁⠀⢀⣼⠟⠀⠀⠀⠀⠀⠀⠀⠹⣷⡀⠀⠈⠙⢿⣯⡙⠻⢷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⠟⢋⣴⡿⠋⠀⠀⠀⠀⣾⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣷⡀⠀⠀⠀⠙⢿⣦⡀⠉⠻⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣠⣾⠟⠁⢠⣾⠏⠀⠀⠀⠀⠀⣼⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣧⠀⠀⠀⠀⠀⠙⣿⣆⠀⠈⠻⣷⣄⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢀⣾⠟⠁⠀⣰⡿⠁⠀⠀⠀⠀⠀⢠⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡆⠀⠀⠀⠀⠀⠈⢻⣦⠀⠀⠈⠻⣷⡄⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⣿⣯⣄⡀⣼⡿⠁⠀⠀⠀⠀⠀⠀⣸⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠀⠀⠀⠀⠀⢻⣧⠀⠀⣠⣼⣿⣆⠀⠀⠀⠀
+⠀⠀⠀⣰⡿⠁⠈⠙⢿⣿⣧⣤⣄⣀⡀⠀⠀⠀⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⡄⠀⠀⠀⢀⣀⣀⣤⣿⣿⠟⠋⠉⠈⢻⣦⠀⠀⠀
+⠀⠀⣰⡿⠁⠀⠀⢀⣿⠃⠀⠉⠙⠛⠻⠿⠿⣿⣿⣶⣶⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣴⣿⣷⡶⠿⠿⠟⠛⠋⠉⠈⣿⡆⠀⠀⠀⠀⢿⣇⠀⠀
+⠀⢠⣿⠃⠀⠀⠀⣼⡏⠀⠀⠀⠀⠀⠀⠀⠀⣼⡇⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠉⠁⠀⠀⢸⣿⠀⠀⠀⠀⠀⠀⠀⠀⢸⣷⠀⠀⠀⠀⠈⣿⡆⠀
+⠀⣼⡟⠀⠀⠀⢀⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡄⠀⠀⠀⠀⢹⣷⠀
+⠀⣿⠃⠀⠀⠀⢸⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡇⠀⠀⠀⠀⠈⣿⡀
+⢰⣿⠀⠀⠀⠀⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⢸⣧⠀⠀⠀⠀⠀⣿⡇
+⢸⣿⣶⣶⣶⣶⣿⣿⣶⣶⣶⣶⣶⣶⣶⣶⣾⣿⣷⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣿⣷⣶⣶⣶⣶⣶⣶⣶⣶⣾⣿⣶⣶⣶⣶⣶⣿⡇
+⢸⣿⠀⠀⠀⠀⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⢸⡿⠀⠀⠀⠀⠀⣿⡇
+⠀⣿⡄⠀⠀⠀⢸⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⡇⠀⠀⠀⠀⢀⣿⠃
+⠀⢻⣇⠀⠀⠀⠈⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠇⠀⠀⠀⠀⢸⡿⠀
+⠀⠘⣿⡄⠀⠀⠀⢻⣇⠀⠀⠀⠀⠀⠀⠀⠀⢻⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠀⠀⠀⠀⠀⠀⢸⡿⠀⠀⠀⠀⢀⣿⠇⠀
+⠀⠀⢹⣷⡀⠀⠀⠘⣿⡄⠀⢀⣀⣤⣤⣴⣶⣾⣿⠿⠿⠿⠿⠛⠛⠛⠛⠛⠛⠛⠛⠻⠿⠿⣿⣿⣶⣶⣦⣤⣤⣀⡀⢀⣿⠇⠀⠀⠀⠀⣼⡟⠀⠀
+⠀⠀⠀⠹⣷⡀⢀⣠⣿⣿⡿⠛⠛⠉⠉⠁⠀⠈⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠇⠀⠀⠀⠉⠉⠛⠻⣿⣿⣦⣄⡀⠀⣼⡟⠀⠀⠀
+⠀⠀⠀⠀⠹⣿⡿⠋⠉⢻⣧⠀⠀⠀⠀⠀⠀⠀⢻⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠀⠀⠀⠀⠀⣼⡟⠀⠈⠙⢿⣿⠏⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠘⢿⣦⠀⠀⠻⣧⡀⠀⠀⠀⠀⠀⠘⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⢀⣼⡟⠀⠀⠀⣠⡿⠋⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠙⢷⣄⠀⠙⣿⣄⠀⠀⠀⠀⠀⢻⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⡿⠀⠀⠀⠀⠀⢠⣾⠏⠀⠀⣠⣾⠟⠁⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣦⣈⠻⣷⣄⠀⠀⠀⠈⢿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡿⠁⠀⠀⠀⢀⣴⡟⠁⢀⣤⡾⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⢷⣾⣿⣷⣄⡀⠀⠈⢿⣆⠀⠀⠀⠀⠀⠀⠀⣰⡿⠃⠀⠀⣠⣾⣿⣋⣤⣾⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⣿⣿⣶⣦⣄⣻⣷⣄⠀⠀⠀⣀⣴⣿⣡⣤⣶⣿⣿⣿⠿⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠙⠛⠛⠿⠿⠿⠿⠿⠿⠿⠿⠛⠛⠋⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
+    os.system(f'echo "{ascii_phising}" | lolcat 2>/dev/null || echo "{ascii_phising}"')
+    
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {R}: {G}Web Phising Checker {R}│ {W}Developer {R}: {G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯{N}""")
+    print(f"{W}╭───────────────────────────────────────────────────────────────────╮{N}")
+    print(f"{W}│ Masukkan {G}Link URL{W} for Checker Phising{N}")
+    print(f"{W}│ Contoh {R}:{a} https://example.com/phising{N}")
+    print(f"{W}╰───────────────────────────────────────────────────────────────────╯{N}")
+    
+    url_target = input(f"{U}❯❯❯ {W}Masukkan URL {G}❯{N} ").strip()
+    
+    if not url_target:
+        print(f"{W}[ {R}??{W} ] URL tidak boleh kosong!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    if not url_target.startswith('http://') and not url_target.startswith('https://'):
+        url_target = 'https://' + url_target
+    
+    print(f"\n{W}[ {G}!{W} ] URL Target: {a}{url_target}{N}")
+    
+    def load_bar(stop_event):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 15
+        color_index = 0
+        while not stop_event.is_set():
+            for i in range(length + 1):
+                if stop_event.is_set():
+                    break
+                filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+                empty = '□' * (length - i)
+                sys.stdout.write(f'\r [ {G}✦{W} ] Mengecek URL [[{filled_color}{empty}{W}]]')
+                sys.stdout.flush()
+                time.sleep(0.05)
+                color_index += 1
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+    
+    stop_loading = threading.Event()
+    loading_thread = threading.Thread(target=load_bar, args=(stop_loading,))
+    loading_thread.daemon = True
+    loading_thread.start()
+    
+    time.sleep(1.5)
+    
+    try:
+        encoded_url = quote(url_target, safe='')
+        api_url = f"https://api.nexray.eu.cc/tools/webphishing?url={encoded_url}"
+        
+        response = requests.get(api_url, timeout=15)
+        stop_loading.set()
+        loading_thread.join()
+        
+        if response.status_code == 200:
+            try:
+                data = response.json()
+                
+                if data.get('status') == True:
+                    result = data.get('result', {})
+                    
+                    print(f"\n{W}╭────────────────────────────────────────────────────────────────────────╮")
+                    print(f"{W}│ {G}✓{W} Hasil Cek URL Phising{N}")
+                    print(f"{W}├────────────────────────────────────────────────────────────────────────┤")
+                    
+                    scanned_url = result.get('scanned_url', url_target)
+                    print(f"{W}│ {W}URL Target          {R}: {G}{scanned_url[:60]}{'...' if len(scanned_url) > 60 else ''}{N}")
+                    
+                    status_code = result.get('status_code', 'Tidak diketahui')
+                    status_desc = result.get('status_description', 'Tidak diketahui')
+                    
+                    if status_code == 1:
+                        status_color = G
+                    elif status_code == 2:
+                        status_color = Y
+                    else:
+                        status_color = R
+                    
+                    print(f"{W}│ {W}Status Code         {R}: {status_color}{status_code}{N}")
+                    print(f"{W}│ {W}Status Description  {R}: {status_color}{status_desc}{N}")
+                    
+                    print(f"{W}├────────────────────────────────────────────────────────────────────────┤")
+                    print(f"{W}│ {W}DETAIL{N}")
+                    
+                    is_phishing = result.get('is_phishing', False)
+                    if is_phishing:
+                        print(f"{W}│ {W}Phishing            {R}: {R}Terdeteksi Phising!{N}")
+                    else:
+                        print(f"{W}│ {W}Phishing            {R}: {G}Tidak terdeteksi{N}")
+                    
+                    contains_malware = result.get('contains_malware', False)
+                    if contains_malware:
+                        print(f"{W}│ {W}Malware             {R}: {R}Terdeteksi Malware!{N}")
+                    else:
+                        print(f"{W}│ {W}Malware             {R}: {G}Tidak terdeteksi{N}")
+                    
+                    sends_to_harmful = result.get('sends_to_harmful_sites', False)
+                    if sends_to_harmful:
+                        print(f"{W}│ {W}Redirect Berbahaya  {R}: {R}Ya{N}")
+                    else:
+                        print(f"{W}│ {W}Redirect Berbahaya  {R}: {G}Tidak{N}")
+                    
+                    installs_malware = result.get('installs_malicious_software', False)
+                    if installs_malware:
+                        print(f"{W}│ {W}Install Malware     {R}: {R}Ya{N}")
+                    else:
+                        print(f"{W}│ {W}Install Malware     {R}: {G}Tidak{N}")
+                    
+                    uncommon_downloads = result.get('uncommon_downloads', False)
+                    if uncommon_downloads:
+                        print(f"{W}│ {W}Download Mencurigakan{R}: {R}Ya{N}")
+                    else:
+                        print(f"{W}│ {W}Download Mencurigakan{R}: {G}Tidak{N}")
+                    
+                    print(f"{W}╰────────────────────────────────────────────────────────────────────────╯")
+                    
+                else:
+                    print(f"\n{W}╭────────────────────────────────────────────────────────────────────╮")
+                    print(f"{W}│ {W}[ {R}✗{W} ] Gagal cek URL! Response status: {data.get('status', 'Tidak diketahui')}{N}")
+                    print(f"{W}╰────────────────────────────────────────────────────────────────────╯")
+                
+            except json.JSONDecodeError:
+                print(f"\n{W}╭────────────────────────────────────────────────────────────────────╮")
+                print(f"{W}│ {W}[ {R}??{W} ] Respon server tidak valid!{N}")
+                print(f"{W}╰────────────────────────────────────────────────────────────────────╯")
+        else:
+            print(f"\n{W}╭──────────────────────────────────────────────────────────────────╮")
+            print(f"{W}│ {W}[ {R}✗{W} ] Gagal mengambil data!")
+            print(f"{W}╰──────────────────────────────────────────────────────────────────╯")
+            
+    except requests.exceptions.Timeout:
+        stop_loading.set()
+        loading_thread.join()
+        print(f"{W}[ {R}✗{W} ] Timeout! Server tidak merespons.{N}")
+    except requests.exceptions.ConnectionError:
+        stop_loading.set()
+        loading_thread.join()
+        print(f"{W}[ {R}✗{W} ] Gagal terhubung ke server!{N}")
+    except Exception as e:
+        stop_loading.set()
+        loading_thread.join()
+        print(f"{W}[ {R}✗{W} ] Error {R}:{a} {e}{N}")
+    
+    input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
+
 def menu_utama():
     global clock_running, current_input
     
@@ -12045,6 +12236,7 @@ def menu_utama():
         "23": tool_telegram_spam,
         "24": tool_ransomware_generator,
         "25": tool_imei_checker,
+        "26": tool_web_phising,
     }
     
     try:
