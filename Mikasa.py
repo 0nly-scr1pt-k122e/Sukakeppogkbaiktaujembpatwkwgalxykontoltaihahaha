@@ -505,6 +505,7 @@ def print_banner(user, date, username):
 {W}│ [ {G}26{N} ] Cek Link {R}/{N} Web Phising{N}
 {W}│ [ {G}27{N} ] Web Reconnaissance{N}
 {W}│ [ {G}28{N} ] lapor Bug ke Admin{N}
+{W}│ [ {G}29{N} ] Tools Tambahan{N}
 {W}╰╭────────────────────────────────────────────────────────────╮{N}
 {W}  {R}00{N} EXIT{N}
 {W}╰────────────────────────────────────────────────────────────╯{N}
@@ -12623,6 +12624,59 @@ def lapor_bug():
     time.sleep(3)
     return
 
+def tool_tambahan():
+    os.system('clear')
+    kontol_asu = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣶⣄⠀⠀⠀⠀⠀⣠⣶⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣷⣤⣤⣴⣾⣿⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⠛⠛⠛⠛⠿⠿⠿⠿⠿⠿⠿⠛⠛⠛⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣀⣠⣤⣴⣶⣶⣿⣶⣦⣤⣤⣤⣄⣀⣀⣀⣀⣠⣤⣤⣤⣴⣶⣿⣶⣶⣦⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀
+⢀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⣤⡀⠀⠀⠀
+⠈⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠁⠀⠀⠀
+⠀⠀⠀⠀⠀⠉⠉⠛⠛⠻⠿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⠿⠟⠛⠛⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣀⣴⣿⣷⣶⣶⡀⢰⣤⣤⣤⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣠⣤⣤⡆⠀⢰⣶⣾⣿⣿⣦⣄⠀⠀⠀⠀⠀⠀
+⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣷⡀⠻⣿⣿⣿⣿⡿⠋⠀⠀⠙⢿⣿⣿⣿⣿⠟⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣦⣀⠀⠀⠀
+⠴⠾⢿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠉⠉⠁⠀⠀⠀⠀⠀⠀⠈⠉⠉⠀⠀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠷⠦⠀
+⠀⠀⠀⠀⠈⠉⠛⠛⠻⠿⣿⣿⣿⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⠿⠛⠛⠋⠉⠁⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣯⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢴⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⢀⣼⣿⣿⣿⣿⣿⣿⣿⡿⠿⠓⠂⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⣿⣿⣶⣄⠀⢀⣾⣿⣿⣿⣿⠿⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⢿⣿⣿⡿⢠⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠃⣾⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
+    os.system(f'echo "{kontol_asu}" | lolcat')
+    print(f"""
+{W}╭──────────────────────────────────────────────────────────────╮
+{W}│ {W}[ {G}1{W} ] ToolsV6
+{W}│ {W}[ {R}0{W} ] Back to Mikasa
+{W}╰──────────────────────────────────────────────────────────────╯{N}""")
+    ajg = input(f"{U}❯❯❯ {W}Pilih Tools Tambahan {G}❯{N} ")
+
+    if ajg == "0":
+       input(f"\n{U}❯❯❯ {W}Press {R}Enter{W} for Back Mikasa")
+       return
+
+    if not ajg:
+       print(f"{W}[ {R}??{W} ] Input Tidak Valid{N}")
+       input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Keluar{N}")
+       return
+    if ajg == "1":
+       pilih_ajg = input(f"{W}[ {G}!!{W} ] Apakah Kamu Ingin melihat tampilannya? ( {G}Y{W}/{R}n{W} ):{N} ")
+       if pilih_ajg == "n" or pilih_ajg == "N":
+          print(f"{W}[ {R}??{W} ] Kembali ke Mikasa{N}")
+          time.sleep(2)
+          return
+
+       if pilih_ajg == "Y" or pilih_ajg == "y":
+          os.system('xdg-open \'https://b.top4top.io/p_3882mdyun0.jpg\'')
+          time.sleep(3)
+
 def menu_utama():
     global clock_running, current_input
     
@@ -12659,6 +12713,7 @@ def menu_utama():
         "26": tool_web_phising,
         "27": tool_web_recon,
         "28": lapor_bug,
+        "29": tool_tambahan,
     }
     
     try:
@@ -12669,7 +12724,7 @@ def menu_utama():
             
             if pilihan in ["0", "00"]:
                 clock_running = False
-                print(f"\n{R}[!] Keluar dari MIKASA...{N}")
+                print(f"\n{W}[ {R}!!{W} ] Keluar dari MIKASA...{N}")
                 time.sleep(1)
                 os.system('clear')
                 sys.exit(0)
@@ -12681,7 +12736,7 @@ def menu_utama():
                     clock_thread = threading.Thread(target=refresh_date, daemon=True)
                     clock_thread.start()
             else:
-                print(f"\n{R}[!] Pilihan tidak valid!{N}")
+                print(f"\n{W}[ {R}??{W} ] Pilihan tidak valid!{N}")
                 time.sleep(1)
                 os.system('clear')
                 user = get_user()
