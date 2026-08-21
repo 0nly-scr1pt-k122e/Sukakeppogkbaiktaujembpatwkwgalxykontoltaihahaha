@@ -250,16 +250,6 @@ def pantau_aktivitas():
                         log_and_exit("LU SEMUA NGENTOT !!")
     except:
         pass
-
-    try:
-        for path in ["/data/local/tmp", "/sdcard/Download", "/storage/emulated/0/Download"]:
-            if os.path.exists(path):
-                mode = os.stat(path).st_mode
-                if mode & stat.S_IWOTH:
-                    log_and_exit("LU SEMUA NGENTOT !!")
-    except:
-        pass
-
     try:
         for port in [8080, 8888, 9000, 9090]:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
