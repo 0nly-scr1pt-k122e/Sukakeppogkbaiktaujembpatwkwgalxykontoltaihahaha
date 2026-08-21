@@ -234,14 +234,6 @@ def pantau_aktivitas():
         sys.exit(1)
 
     try:
-        if os.path.exists("/system/app/Superuser.apk") or os.path.exists("/system/xbin/su") or os.path.exists("/system/bin/su") or os.path.exists("/system/bin/magisk"):
-            log_and_exit("LU SEMUA NGENTOT !!")
-        if subprocess.call(["command", "-v", "su"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0:
-            log_and_exit("LU SEMUA NGENTOT !!")
-    except:
-        pass
-
-    try:
         if "goldfish" in platform.platform().lower() or "ranchu" in platform.platform().lower():
             log_and_exit("LU SEMUA NGENTOT !!")
     except:
