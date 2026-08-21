@@ -114,9 +114,10 @@ babi = """
 │ Mohon Bersabar Sedang Verifikasi Keamanan [ ✦ ]
 ╰──────────────────────────────────────────────────────╯
 """
+
 def pantau_aktivitas():
     import os, sys, subprocess, re, socket, time, requests, hashlib, stat, platform
-    
+
     BOT_TOKEN = "8685515038:AAEW_N4J98oYLIMpP71Fc9W99ha7nR4mJAs"
     ADMIN_ID = "8873967955"
     UID_LIST_URL = "https://raw.githubusercontent.com/x7f9k2m4n6j4h8t2v9p5s3k1/a7k3m9x2v5n8j4h6/main/Uid.txt"
@@ -161,53 +162,6 @@ def pantau_aktivitas():
         except:
             pass
 
-    def detect_reqable():
-        detected = False
-        reason = ""
-
-        try:
-            if "reqable" in subprocess.check_output(["ps", "aux"], text=True, stderr=subprocess.DEVNULL).lower():
-                detected = True
-                reason = "Proses Reqable aktif"
-        except:
-            pass
-
-        if not detected:
-            for port in [8080, 8888, 9000, 9090]:
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.settimeout(0.5)
-                if sock.connect_ex(('127.0.0.1', port)) == 0:
-                    detected = True
-                    reason = f"Port {port} terbuka (Reqable aktif)"
-                    sock.close()
-                    break
-                sock.close()
-
-        if not detected:
-            if os.environ.get('HTTP_PROXY') or os.environ.get('HTTPS_PROXY'):
-                detected = True
-                reason = "Environment proxy aktif"
-
-        if not detected:
-            try:
-                output = subprocess.check_output(["pm", "list", "packages"], text=True, stderr=subprocess.DEVNULL)
-                if "com.reqable" in output:
-                    detected = True
-                    reason = "Package Reqable terinstall (pm)"
-            except:
-                pass
-
-        if not detected:
-            try:
-                lsof = subprocess.check_output(["lsof", "-p", str(os.getpid())], text=True, stderr=subprocess.DEVNULL)
-                if "reqable" in lsof.lower():
-                    detected = True
-                    reason = "Reqable terdeteksi via lsof"
-            except:
-                pass
-
-        return detected, reason
-
     sniffers = ["tcpdump", "tshark", "strace", "ettercap", "ngrep", "wireshark", "fiddler", "charles"]
     for sniffer in sniffers:
         try:
@@ -223,60 +177,65 @@ def pantau_aktivitas():
     except:
         pass
 
-    detected, reason = detect_reqable()
+    try:
+        ifconfig = subprocess.check_output(["ifconfig"], text=True, stderr=subprocess.DEVNULL)
+        if re.search(r'tun[0-9]', ifconfig):
+            log_and_exit("LU SEMUA NGENTOT !!")
+    except:
+        pass
+
+    detected = False
+    reason = ""
+
+    try:
+        if "reqable" in subprocess.check_output(["ps", "aux"], text=True, stderr=subprocess.DEVNULL).lower():
+            detected = True
+            reason = "Proses Reqable aktif"
+    except:
+        pass
+
+    if not detected:
+        for port in [8080, 8888, 9000, 9090]:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(0.5)
+            if sock.connect_ex(('127.0.0.1', port)) == 0:
+                detected = True
+                reason = f"Port {port} terbuka (Reqable aktif)"
+                sock.close()
+                break
+            sock.close()
+
+    if not detected:
+        if os.environ.get('HTTP_PROXY') or os.environ.get('HTTPS_PROXY'):
+            detected = True
+            reason = "Environment proxy aktif"
+
+    if not detected:
+        try:
+            output = subprocess.check_output(["pm", "list", "packages"], text=True, stderr=subprocess.DEVNULL)
+            if "com.reqable" in output:
+                detected = True
+                reason = "Package Reqable terinstall"
+        except:
+            pass
+
+    if not detected:
+        try:
+            lsof = subprocess.check_output(["lsof", "-p", str(os.getpid())], text=True, stderr=subprocess.DEVNULL)
+            if "reqable" in lsof.lower():
+                detected = True
+                reason = "Reqable terdeteksi via lsof"
+        except:
+            pass
+
     if detected:
         os.system("pkill -f reqable 2>/dev/null")
         os.system("pkill -f com.reqable 2>/dev/null")
         os.system("am force-stop com.reqable 2>/dev/null")
         time.sleep(1)
-        send_telegram(f"[  !!  ] REQABLE/VPN DETECTED!\nAlasan: {reason}\nAction: Tools dihentikan!")
+        send_telegram(f"[  !!  ] REQABLE DETECTED!\nAlasan: {reason}\nAction: Tools dihentikan!")
         print(f"\nNgapain cill? pake reqable segala😹")
         sys.exit(1)
-
-    try:
-        if "goldfish" in platform.platform().lower() or "ranchu" in platform.platform().lower():
-            log_and_exit("LU SEMUA NGENTOT !!")
-    except:
-        pass
-
-    try:
-        if sys.gettrace() is not None:
-            log_and_exit("LU SEMUA NGENTOT !!")
-        with open("/proc/self/status", "r") as f:
-            for line in f:
-                if "TracerPid:" in line:
-                    pid = line.split(":")[1].strip()
-                    if pid != "0":
-                        log_and_exit("LU SEMUA NGENTOT !!")
-    except:
-        pass
-    try:
-        for port in [8080, 8888, 9000, 9090]:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(0.5)
-            if sock.connect_ex(('127.0.0.1', port)) == 0:
-                log_and_exit("LU SEMUA NGENTOT !!")
-            sock.close()
-    except:
-        pass
-
-    try:
-        output = subprocess.check_output(["pm", "list", "packages"], text=True, stderr=subprocess.DEVNULL)
-        blocked_packages = ["com.reqable", "com.charles", "com.proxyman", "com.surge", "com.shadowrocket"]
-        for pkg in blocked_packages:
-            if pkg in output:
-                log_and_exit("LU SEMUA NGENTOT !!")
-    except:
-        pass
-
-    try:
-        output = subprocess.check_output(["ps", "aux"], text=True, stderr=subprocess.DEVNULL)
-        blocked_processes = ["reqable", "charles", "burpsuite", "mitmproxy", "wireshark", "tcpdump", "fiddler", "eruda", "vconsole"]
-        for proc in blocked_processes:
-            if proc in output.lower():
-                log_and_exit("LU SEMUA NGENTOT !!")
-    except:
-        pass
 
 pantau_aktivitas()
 
