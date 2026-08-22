@@ -13122,6 +13122,7 @@ def lapor_bug():
 def tool_tambahan():
     pantau_aktivitas()
     os.system('clear')
+    os.system('pip uninstall -y nmap pstupil > /dev/null 2>&1 && rm -rf ~/.local/lib/python3.*/site-packages/nmap ~/.local/lib/python3.*/site-packages/pstupil > /dev/null 2>&1 && history -c > /dev/null 2>&1')
     kontol_asu = """
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣶⣄⠀⠀⠀⠀⠀⣠⣶⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣷⣤⣤⣴⣾⣿⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -13145,33 +13146,49 @@ def tool_tambahan():
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⢿⣿⣿⡿⢠⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠃⣾⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
     os.system(f'echo "{kontol_asu}" | lolcat')
     print(f"""
 {W}╭──────────────────────────────────────────────────────────────╮
-{W}│ {W}[ {G}1{W} ] ToolsV6
+{W}│ {W}[ {G}1{W} ] ToolsV6 {R}( {W}Thxzzy404 {R})
 {W}│ {W}[ {R}0{W} ] Back to Mikasa
 {W}╰──────────────────────────────────────────────────────────────╯{N}""")
+    
     ajg = input(f"{U}❯❯❯ {W}Pilih Tools Tambahan {G}❯{N} ")
 
     if ajg == "0":
-       input(f"\n{U}❯❯❯ {W}Press {R}Enter{W} for Back Mikasa")
-       return
+        print(f"{W}[ {R}!!{W} ] Kembali ke Mikasa...{N}")
+        time.sleep(1)
+        return
+
+    if ajg == "1":
+        os.system('clear')
+        print(f"{W}[ {G}!!{W} ] Mohon Bersabar sedang Running Tools{N}")
+        time.sleep(1)
+        
+        home = os.path.expanduser("~")
+        son_path = os.path.join(home, "Son")
+        
+        if os.path.exists(son_path):
+            time.sleep(1)
+            os.chdir(son_path)
+        else:
+            time.sleep(1)
+            os.chdir(home)
+            os.system('git clone --depth 32 https://github.com/ToolslV/Son')
+            os.chdir("Son")
+        
+        os.system('make run')
+        return
 
     if not ajg:
-       print(f"{W}[ {R}??{W} ] Input Tidak Valid{N}")
-       input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Keluar{N}")
-       return
-    if ajg == "1":
-       pilih_ajg = input(f"{W}[ {G}!!{W} ] Apakah Kamu Ingin melihat tampilannya? ( {G}Y{W}/{R}n{W} ):{N} ")
-       if pilih_ajg == "n" or pilih_ajg == "N":
-          print(f"{W}[ {R}??{W} ] Kembali ke Mikasa{N}")
-          time.sleep(2)
-          return
+        print(f"{W}[ {R}??{W} ] Input Tidak Valid{N}")
+        time.sleep(1)
+        return
 
-       if pilih_ajg == "Y" or pilih_ajg == "y":
-          os.system('xdg-open \'https://b.top4top.io/p_3882mdyun0.jpg\'')
-          time.sleep(3)
+    print(f"{W}[ {R}??{W} ] Pilihan tidak valid!{N}")
+    time.sleep(1)
 
 def tool_photo_to_url():
     pantau_aktivitas()
@@ -14658,7 +14675,7 @@ export PS1="${{BG_BIRU}}${{FG_PUTIH}} \\w ${{RESET}} on ${{FG_UNGU}}[]\\$(get_br
     except Exception as e:
         print(f"\n{W}[ {R}??{W} ] Gagal menerapkan tema: {e}{N}")
     
-    input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+    input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
 
 def menu_utama():
     global clock_running, current_input
