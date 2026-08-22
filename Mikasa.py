@@ -596,7 +596,7 @@ def print_banner(user, date, username):
 {W}│  {W}Author: {G}Rulzzz_06{N}
 {W}│  {W}Tools : {G}36{N}
 {W}│  {W}Date  : {G}{date}{N}
-{W}│  {W}Version: {G}3.4.1{N}
+{W}│  {W}Version: {G}3.4.4{N}
 {W}│  {W}Halo👋: {G}{username}{N}
 {W}│  {W}User : {G}Premium{N}
 {W}╰────────────────────────────────────────────────────────────╯{N}
@@ -638,6 +638,8 @@ def print_banner(user, date, username):
 {W}│ [ {G}34{N} ] Link Shortener{N}
 {W}│ [ {G}35{N} ] Downloader Status Contact{N}
 {W}│ [ {G}36{N} ] Cek Resi Paket{N}
+{W}│ [ {G}37{N} ] Get id Bot telegram{N}
+{W}│ [ {G}38{N} ] Thema termux kece{N}
 {W}╰╭───────────────────────────────────────────────────────────╮{N}
 {W}  {R}00{N} EXIT{N}
 {W}╰────────────────────────────────────────────────────────────╯{N}
@@ -14327,6 +14329,337 @@ def tool_cek_resi():
     
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
 
+def tool_get_bot_id():
+    import os, sys, time, requests, threading, json
+    from datetime import datetime
+    
+    os.system('clear')
+    
+    R = '\033[91m'
+    G = '\033[92m'
+    Y = '\033[93m'
+    W = '\033[97m'
+    C = '\033[96m'
+    U = '\033[95m'
+    N = '\033[0m'
+    
+    ascii_botid = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣠⣤⣤⣤⣤⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⠀⠀
+⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⡀⠀⠀⠀
+⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⠀⠀
+⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠛⠋⠉⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀
+⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠛⠉⠁⠀⠀⢀⣠⠄⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀
+⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠉⠁⠀⠀⠀⠀⢀⣤⡶⠟⠁⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠛⠉⠀⠀⠀⠀⠀⠀⠀⣀⣤⣾⡿⠋⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
+⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣀⡀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣾⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
+⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣤⣤⣴⣾⣿⣿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀
+⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀
+⠀⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀
+⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⣠⣶⣿⣶⣄⠀⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁⠀⠀
+⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣾⣿⣿⣿⣿⣿⣿⣦⣀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀
+⠀⠀⠀⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠙⠛⠻⠿⠿⠿⠿⠿⠿⠛⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
+    os.system(f'echo "{ascii_botid}" | lolcat 2>/dev/null || echo "{ascii_botid}"')
+    
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {R}: {G}Get ID Bot Telegram {R}│ {W}Developer {R}: {G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯""")
+    
+    print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+    print(f"{W}│ Masukkan {G}Token Bot Telegram")
+    print(f"{W}│ Contoh {R}:{a} 1234567890:ABCdefGHIjklMNOpqrsTUVwxyz")
+    print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+    
+    bot_token = input(f"{U}❯❯❯ {W}Token Bot {G}❯{N} ").strip()
+    
+    if not bot_token:
+        print(f"\n{W}[ {R}??{W} ] Token tidak boleh kosong!{N}")
+        input(f"{U}❯❯❯ {W}Tekan Enter untuk kembali...{N}")
+        return
+    
+    def load_bar_bot(stop_event):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 15
+        color_index = 0
+        while not stop_event.is_set():
+            for i in range(length + 1):
+                if stop_event.is_set():
+                    break
+                filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+                empty = '□' * (length - i)
+                sys.stdout.write(f'\r [ {G}✦{W} ] Mengambil Info Bot [[{filled_color}{empty}{W}]]')
+                sys.stdout.flush()
+                time.sleep(0.05)
+                color_index += 1
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+    
+    stop = threading.Event()
+    t = threading.Thread(target=load_bar_bot, args=(stop,))
+    t.daemon = True
+    t.start()
+    
+    try:
+        url = f'https://api.telegram.org/bot{bot_token}/getMe'
+        resp = requests.get(url, timeout=15)
+        
+        stop.set()
+        t.join()
+        
+        if resp.status_code == 200:
+            data = resp.json()
+            
+            if data.get('ok'):
+                result = data.get('result', {})
+                
+                output = {
+                    "id": result.get('id'),
+                    "username": result.get('username'),
+                    "first_name": result.get('first_name'),
+                    "last_name": result.get('last_name'),
+                    "is_bot": result.get('is_bot', True),
+                    "can_join_groups": result.get('can_join_groups', False),
+                    "can_read_all_group_messages": result.get('can_read_all_group_messages', False),
+                    "supports_inline_queries": result.get('supports_inline_queries', False),
+                    "can_connect_to_business": result.get('can_connect_to_business', False),
+                    "has_main_webhook": result.get('has_main_webhook', False),
+                }
+                
+                print(f"\n{W}╭─────────────────────────────────────────────────────────────────╮")
+                print(f"{W}│ {G}✓{W} Succesfuly, Info Bot Telegram {R}:{N}")
+                print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+                print(f"{W}│ {W}ID Bot      {R}: {G}{result.get('id', 'N/A')}{N}")
+                print(f"{W}│ {W}Nama        {R}: {G}{result.get('first_name', 'N/A')}{N}")
+                print(f"{W}│ {W}Username    {R}: {G}@{result.get('username', 'N/A')}{N}")
+                print(f"{W}│ {W}Is Bot      {R}: {G}{'Ya' if result.get('is_bot', False) else 'Bukan Bot'}{N}")
+                print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+                
+                try:
+                    json_dir = "/sdcard/Bot_Info"
+                    if not os.path.exists(json_dir):
+                        os.makedirs(json_dir)
+                    
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    filename = f"bot_info_{timestamp}.json"
+                    filepath = os.path.join(json_dir, filename)
+                    
+                    with open(filepath, 'w') as f:
+                        json.dump(output, f, indent=2)
+                    
+                except:
+                    try:
+                        filename = f"bot_info_{timestamp}.json"
+                        with open(filename, 'w') as f:
+                            json.dump(output, f, indent=2)
+                        print(f"\n{W}[ {G}!!{W} ] Info disimpan di {R}: {filename}{N}")
+                    except:
+                        print(f"\n{W}[ {R}??{W} ] Gagal menyimpan file!{N}")
+                
+            else:
+                print(f"\n{W}╭─────────────────────────────────────────────────────────────────╮")
+                print(f"{W}│ {R}✗{W} Token Bot Tidak Valid!{N}")
+                print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+                print(f"{W}│ {W}Pesan {R}: {G}{data.get('description', 'Unknown error')}{N}")
+                print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+        else:
+            print(f"\n{W}╭─────────────────────────────────────────────────────────────────╮")
+            print(f"{W}│ {R}✗{W} Gagal mengakses Telegram API!{N}")
+            print(f"{W}├─────────────────────────────────────────────────────────────────┤")
+            print(f"{W}│ {W}Status {R}: {G}{resp.status_code}{N}")
+            print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+            
+    except Exception as e:
+        stop.set()
+        t.join()
+        print(f"\n{W}[ {R}??{W} ] Error: {e}{N}")
+    
+    input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+
+def tool_theme_termux():
+    import os, sys, time, subprocess, threading
+    
+    os.system('clear')
+    
+    R = '\033[91m'
+    G = '\033[92m'
+    Y = '\033[93m'
+    W = '\033[97m'
+    C = '\033[96m'
+    U = '\033[95m'
+    N = '\033[0m'
+    
+    ascii_theme = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⠞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣠⠄⣴⣿⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿⣦⠠⣄⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣠⣾⠃⣼⣿⠟⡡⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢌⠻⣿⣧⠘⣷⣄⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢠⢠⣿⡟⠰⢋⣡⣾⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⠒⠲⣶⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣷⣌⡙⠆⢻⣿⡄⡄⠀⠀⠀⠀
+⠀⠀⣰⡇⢸⣿⢃⣴⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠿⠃⠀⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣦⡘⣿⡇⢸⣆⠀⠀⠀
+⠀⢠⣿⡇⢸⣿⡿⠋⣡⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣌⠙⢿⣿⡇⢸⣿⡄⠀⠀
+⠀⢸⣿⣷⠸⠋⣠⣾⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣷⣄⠙⠇⣾⣿⡇⠀⠀
+⢠⠘⣿⣿⢠⣾⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣷⡄⣿⣿⠃⡄⠀
+⣼⠀⢻⣯⣿⡟⢁⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⡈⢻⣿⣽⡟⠀⣧⠀
+⣿⣇⠈⣿⠏⢀⣾⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠠⣤⣶⣶⣤⠄⢄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣷⡀⠹⣿⠁⣸⣿⠀
+⢻⣿⣆⠘⢠⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣾⡇⠀⠀⣽⣯⠀⠀⢸⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⡄⠃⣰⣿⡟⠀
+⠘⣿⣿⡄⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣶⣶⣾⣿⣿⣿⣿⣿⠀⠀⠈⢸⡇⠁⠀⠀⣿⣿⣿⣿⣿⣷⣶⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⢠⣿⣿⠃⠀
+⣆⠘⢿⣧⣿⡏⢠⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⣿⣿⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⡄⢹⣿⣼⡿⠃⣰⠀
+⢻⣦⡈⠻⣿⠁⢸⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⣿⣿⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠈⣿⠟⢁⣴⡟⠀
+⠈⢿⣿⣦⡘⠀⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⢘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⣿⣿⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡃⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⢃⣴⣿⡿⠁⠀
+⠀⠈⠻⣿⣷⣄⢻⣿⡆⢰⣄⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣿⣿⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⣠⡆⢰⣿⡟⣠⣾⣿⠟⠁⠀⠀
+⠀⠀⢠⡈⠻⣿⣾⣿⡇⠸⣿⣆⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⣰⣿⠇⢸⣿⣷⣿⠟⢁⡄⠀⠀⠀
+⠀⠀⠀⢻⣦⣀⠉⠻⢿⡀⣿⣿⡄⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⢠⣿⣿⢀⡿⠟⠉⣀⣴⡟⠀⠀⠀⠀
+⠀⠀⠀⠀⠙⢿⣷⣶⣤⣁⠘⣿⣷⡈⢦⡀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⢀⡴⢁⣾⣿⠃⣈⣤⣶⣾⡿⠋⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠙⠻⣿⣿⣷⣮⣿⣧⠘⢿⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⡿⠃⣼⣿⣵⣾⣿⣿⠟⠋⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠑⣤⣈⠉⠛⠛⠛⠷⠌⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠡⠾⠛⠛⠛⠉⣁⣤⠊⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠿⣿⣿⣶⣶⣶⣶⣶⣿⣿⣿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⣿⣿⣿⣶⣶⣶⣶⣶⣿⣿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢈⡉⠙⠛⠋⠉⠉⣀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣄⣀⠉⠉⠙⠛⠋⢉⡁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⠿⣿⣿⣿⣿⣿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⣿⣿⣿⣿⣿⠿⠟⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠛⠛⠛⠛⠛⠛⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
+    os.system(f'echo "{ascii_theme}" | lolcat 2>/dev/null || echo "{ascii_theme}"')
+    
+    print(f"""
+{W}╭─────────────────────────────────────────────────────────────────╮
+{W}│ {W}Tools {R}: {G}Theme Termux {R}│ {W}Developer {R}: {G}Rullzzz06
+{W}╰─────────────────────────────────────────────────────────────────╯""")
+    
+    themes = {
+        "1": {"name": "Ubuntu", "neofetch": "ubuntu"},
+        "2": {"name": "Kali Linux", "neofetch": "kali"},
+        "3": {"name": "Arch Linux", "neofetch": "arch"},
+        "4": {"name": "Debian", "neofetch": "debian"},
+        "5": {"name": "Fedora", "neofetch": "fedora"},
+        "6": {"name": "Termux Default", "neofetch": "termux"},
+        "7": {"name": "Alpine", "neofetch": "alpine"},
+        "8": {"name": "NixOS", "neofetch": "nixos"},
+        "9": {"name": "Void", "neofetch": "void"},
+        "10": {"name": "Gentoo", "neofetch": "gentoo"},
+        "11": {"name": "OpenSUSE", "neofetch": "opensuse"},
+        "12": {"name": "Manjaro", "neofetch": "manjaro"},
+        "13": {"name": "Android", "neofetch": "android"},
+        "14": {"name": "Apple", "neofetch": "apple"},
+        "15": {"name": "BSD", "neofetch": "bsd"},
+        "16": {"name": "CentOS", "neofetch": "centos"},
+        "17": {"name": "Elementary", "neofetch": "elementary"},
+        "18": {"name": "EndeavourOS", "neofetch": "endeavouros"},
+        "19": {"name": "Garuda", "neofetch": "garuda"},
+        "20": {"name": "Linux Mint", "neofetch": "linuxmint"},
+        "21": {"name": "Pop!_OS", "neofetch": "popos"},
+        "22": {"name": "Raspbian", "neofetch": "raspbian"},
+        "23": {"name": "Red Hat", "neofetch": "redhat"},
+        "24": {"name": "Windows", "neofetch": "windows"},
+    }
+    
+    print(f"{W}╭─────────────────────────────────────────────────────────────────╮")
+    print(f"{W}│ Daftar Thema {R}: {N}")
+    for key, value in themes.items():
+     print(f"{W}│ [ {G}{key}{W} ] {value['name']}")
+    print(f"{W}│ [ {R}0{W} ] Kembali ke Mikasa")
+    print(f"{W}╰─────────────────────────────────────────────────────────────────╯{N}")
+    
+    try:
+        pilih = input(f"{U}❯❯❯ {W}Pilih Thema {G}❯{N} ")
+        if pilih == "0":
+            return
+        if pilih not in themes:
+            print(f"{W}[ {R}??{W} ] Pilihan tidak valid!{N}")
+            time.sleep(1)
+            return
+    except:
+        print(f"{W}[ {R}??{W} ] Masukkan angka!{N}")
+        time.sleep(1)
+        return
+    
+    selected = themes[pilih]
+    
+    def load_bar_theme(stop_event):
+        COLORS = ['\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m']
+        RESET = '\x1b[0m'
+        length = 15
+        color_index = 0
+        while not stop_event.is_set():
+            for i in range(length + 1):
+                if stop_event.is_set():
+                    break
+                filled_color = COLORS[color_index % len(COLORS)] + '■' * i + RESET
+                empty = '□' * (length - i)
+                sys.stdout.write(f'\r [ {G}✦{W} ] Menerapkan Tema {selected["name"]} [[{filled_color}{empty}{W}]]')
+                sys.stdout.flush()
+                time.sleep(0.05)
+                color_index += 1
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+    
+    stop = threading.Event()
+    t = threading.Thread(target=load_bar_theme, args=(stop,))
+    t.daemon = True
+    t.start()
+    time.sleep(1.5)
+    stop.set()
+    t.join()
+    
+    try:
+        bashrc_path = os.path.expanduser("~/.bashrc")
+        
+        bashrc_template = f'''# ── {selected['name']} Theme ──
+neofetch --ascii_distro {selected['neofetch']}
+
+BG_BIRU="\\[\\e[48;5;25m\\]"
+FG_PUTIH="\\[\\e[38;5;255m\\]"
+FG_ABU="\\[\\e[38;5;245m\\]"
+FG_UNGU="\\[\\e[38;5;93m\\]"
+FG_HIJAU="\\[\\e[38;5;46m\\]"
+RESET="\\[\\e[0m\\]"
+
+get_branch_info() {{
+    if [[ "$PWD" == *"/Mikasa"* ]]; then
+        echo " make run"
+    else
+        echo " main"
+    fi
+}}
+
+export PS1="${{BG_BIRU}}${{FG_PUTIH}} \\w ${{RESET}} on ${{FG_UNGU}}[]\\$(get_branch_info)\\n${{FG_HIJAU}}❯${{RESET}} "
+'''
+        
+        with open(bashrc_path, 'w') as f:
+            f.write(bashrc_template)
+
+        os.system('clear')
+        try:
+            subprocess.run(['neofetch', '--ascii_distro', selected['neofetch']], timeout=10)
+        except:
+            print(f"{W}[ {R}??{W} ] Neofetch tidak terinstall!{N}")
+            print(f"{W}Install {R}:{W} pkg install neofetch{N}")
+        
+        print(f"\n{W}╭─────────────────────────────────────────────────────────────────╮")
+        print(f"{W}│ ketik {G}YES{W} Untuk Memakai dan ketik {R}NO{W} Untuk Tidak Mengganti {N}")
+        print(f"{W}╰─────────────────────────────────────────────────────────────────╯")
+        
+        restart = input(f"{U}❯❯❯ {W}Memakai Thema Termux sekarang? {R}: {N}").lower()
+        if restart == 'yes':
+            print(f" {W}[ {G}!!{W} ] Restarting Termux...{N}")
+            time.sleep(1)
+            os.system('kill -9 -1')
+            sys.exit(0)
+            
+    except Exception as e:
+        print(f"\n{W}[ {R}??{W} ] Gagal menerapkan tema: {e}{N}")
+    
+    input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
+
 def menu_utama():
     global clock_running, current_input
     
@@ -14371,6 +14704,8 @@ def menu_utama():
         "34": tool_link_shortener,
         "35": tool_Hack_status_wa,
         "36": tool_cek_resi,
+        "37": tool_get_bot_id,
+        "38": tool_theme_termux,
     }
     
     try:
