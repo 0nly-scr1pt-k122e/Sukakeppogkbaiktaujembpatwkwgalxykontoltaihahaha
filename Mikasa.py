@@ -594,7 +594,7 @@ def print_banner(user, date, username):
 {W}│  {W}UID   : {C}{uid}{N}
 {W}│  {W}Status: {status_text}{N}
 {W}│  {W}Author: {G}Rulzzz_06{N}
-{W}│  {W}Tools : {G}36{N}
+{W}│  {W}Tools : {G}38{N}
 {W}│  {W}Date  : {G}{date}{N}
 {W}│  {W}Version: {G}3.4.4{N}
 {W}│  {W}Halo👋: {G}{username}{N}
@@ -602,44 +602,44 @@ def print_banner(user, date, username):
 {W}╰────────────────────────────────────────────────────────────╯{N}
                            M E N U
 {W}╭────────────────────────────────────────────────────────────╮{N}
-{W}│ [ {G}01{N} ] SPAM OTP WA {R}/{N} SMS{N}
-{W}│ [ {G}02{N} ] SPAM PAIRING{N}
-{W}│ [ {G}03{N} ] SPAM CALL{N}
-{W}│ [ {G}04{N} ] SPAM REPORT{N}
-{W}│ [ {G}05{N} ] SPAM NGL{N}
-{W}│ [ {G}06{N} ] OSINT{N}
-{W}│ [ {G}07{N} ] Music{N}
-{W}│ [ {G}08{N} ] Obfuscate Python{N}
-{W}│ [ {G}09{N} ] cracker alamat IP{N}
-{W}│ [ {G}10{N} ] Scanner Port Web{N}
-{W}│ [ {G}11{N} ] Parster NIK{N}
-{W}│ [ {G}12{N} ] Phising IP
-{W}│ [ {G}13{N} ] Tiktok downloader{N}
-{W}│ [ {G}14{N} ] Gabung Grup{N}
-{W}│ [ {G}15{N} ] QR Generator{N}
-{W}│ [ {G}16{N} ] List User access{N}
-{W}│ [ {G}17{N} ] Checker Code Pos{N}
-{W}│ [ {G}18{N} ] Dork NPSN{N}
-{W}│ [ {G}19{N} ] Checker uid Freefire{N}
-{W}│ [ {G}20{N} ] Checker Akun Roblox{N}
-{W}│ [ {G}21{N} ] Spam Akun Email{N}
-{W}│ [ {G}22{N} ] Cek data Guru{N}
-{W}│ [ {G}23{N} ] Spam bot Telegram{N}
-{W}│ [ {G}24{N} ] Generator Ransomware terminal{N}
-{W}│ [ {G}25{N} ] Cek IMEI{N}
-{W}│ [ {G}26{N} ] Cek Link {R}/{N} Web Phising{N}
-{W}│ [ {G}27{N} ] Web Reconnaissance{N}
-{W}│ [ {G}28{N} ] lapor Bug ke Admin{N}
-{W}│ [ {G}29{N} ] Tools Tambahan{N}
-{W}│ [ {G}30{N} ] Photo {R}/{N} Video to URL{N}
-{W}│ [ {G}31{N} ] File to URL{N}
-{W}│ [ {G}32{N} ] KILL Bot Telegram{N}
-{W}│ [ {G}33{N} ] Cek Informasi Bot Telegram{N}
-{W}│ [ {G}34{N} ] Link Shortener{N}
-{W}│ [ {G}35{N} ] Downloader Status Contact{N}
-{W}│ [ {G}36{N} ] Cek Resi Paket{N}
-{W}│ [ {G}37{N} ] Get id Bot telegram{N}
-{W}│ [ {G}38{N} ] Thema termux kece{N}
+{W}│ [ {G}01{W} ] {N}SPAM OTP WA {R}/{W} SMS{N}
+{W}│ [ {G}02{W} ] {N}SPAM PAIRING{N}
+{W}│ [ {G}03{W} ] {N}SPAM CALL{N}
+{W}│ [ {G}04{W} ] {N}SPAM REPORT{N}
+{W}│ [ {G}05{W} ] {N}SPAM NGL{N}
+{W}│ [ {G}06{W} ] {N}OSINT{N}
+{W}│ [ {G}07{W} ] {N}Music{N}
+{W}│ [ {G}08{W} ] {N}Obfuscate Python{N}
+{W}│ [ {G}09{W} ] {N}cracker alamat IP{N}
+{W}│ [ {G}10{W} ] {N}Scanner Port Web{N}
+{W}│ [ {G}11{W} ] {N}Parster NIK{N}
+{W}│ [ {G}12{W} ] {N}Phising IP
+{W}│ [ {G}13{W} ] {N}Tiktok downloader{N}
+{W}│ [ {G}14{W} ] {N}Gabung Grup{N}
+{W}│ [ {G}15{W} ] {N}QR Generator{N}
+{W}│ [ {G}16{W} ] {N}List User access{N}
+{W}│ [ {G}17{W} ] {N}Checker Code Pos{N}
+{W}│ [ {G}18{W} ] {N}Dork NPSN{N}
+{W}│ [ {G}19{W} ] {N}Checker uid Freefire{N}
+{W}│ [ {G}20{W} ] {N}Checker Akun Roblox{N}
+{W}│ [ {G}21{W} ] {N}Spam Akun Email{N}
+{W}│ [ {G}22{W} ] {N}Cek data Guru{N}
+{W}│ [ {G}23{W} ] {N}Spam bot Telegram{N}
+{W}│ [ {G}24{W} ] {N}Generator Ransomware terminal{N}
+{W}│ [ {G}25{W} ] {N}Cek IMEI{N}
+{W}│ [ {G}26{W} ] {N}Cek Link {R}/{W} Web Phising{N}
+{W}│ [ {G}27{W} ] {N}Web Reconnaissance{N}
+{W}│ [ {G}28{W} ] {N}lapor Bug ke Admin{N}
+{W}│ [ {G}29{W} ] {N}Tools Tambahan{N}
+{W}│ [ {G}30{W} ] {N}Photo {R}/{W} Video to URL{N}
+{W}│ [ {G}31{W} ] {N}File to URL{N}
+{W}│ [ {G}32{W} ] {N}KILL Bot Telegram{N}
+{W}│ [ {G}33{W} ] {N}Cek Informasi Bot Telegram{N}
+{W}│ [ {G}34{W} ] {N}Link Shortener{N}
+{W}│ [ {G}35{W} ] {N}Downloader Status Contact{N}
+{W}│ [ {G}36{W} ] {N}Cek Resi Paket{N}
+{W}│ [ {G}37{W} ] {N}Get id Bot telegram{N}
+{W}│ [ {G}38{W} ] {N}Thema termux kece{N}
 {W}╰╭───────────────────────────────────────────────────────────╮{N}
 {W}  {R}00{N} EXIT{N}
 {W}╰────────────────────────────────────────────────────────────╯{N}
