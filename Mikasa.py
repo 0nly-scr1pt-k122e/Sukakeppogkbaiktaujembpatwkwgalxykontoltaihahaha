@@ -6397,6 +6397,7 @@ def mulai_spam(nomor):
     "116": spam_otp_dreamdubai,
     "117": spam_otp_bukuaku,
     "118": spam_otp_starlite,
+    "119": spam_otp_unpatti,
 }
      hasil = {}
      total_api = len(apis)
