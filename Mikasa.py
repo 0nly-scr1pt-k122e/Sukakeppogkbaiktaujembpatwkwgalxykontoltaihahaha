@@ -6380,7 +6380,7 @@ def mulai_spam(nomor):
      "96": spam_otp_mapclub_sms_kedua,
      "97": spam_otp_ruparupa,
      "98": spam_otp_cashenable,
-     "99": spam_otp_eraspace,
+     "99": spam_eraspace,
      "99": spam_otp_jec,
      "100": spam_otp_oyorooms,
      "101": spam_otp_kitabisa_wea,
